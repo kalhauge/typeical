@@ -56,9 +56,10 @@ instance Show e => Show (Ambigious e) where
     show e = show (e [])
 
 bnf :: Parser BNF
-bnf = do 
+bnf = try $ do 
   exprs <- bnfExpr `endBy1` try (do newline; notFollowedBy nonbreak)
   let symbols = map fst exprs
+  void newline <|> eof
   return . BNF . M.fromList $ zip symbols $ mapM snd exprs symbols
 
 bnfExpr :: Parser (Symbol, Ambigious Expression)
@@ -93,7 +94,7 @@ constant = pure <$> Const <$> constants <?> "constant"
           ]
 
 symbol :: Parser Symbol
-symbol = Symbol <$> (within '<' '>' <|> many1 letter)
+symbol = Symbol <$> (within '<' '>' <|> many1 letter) <?> "symbol"
 
 expression :: Parser (Ambigious Expression)
 expression = sequence <$> helper
