@@ -23,26 +23,30 @@ newtype BNF = BNF (M.Map Symbol Expression) deriving (Show)
 
 pprintBNF :: BNF -> ShowS
 pprintBNF (BNF m) ss = M.foldrWithKey f ss m
-  where f :: Symbol -> Expression -> ShowS 
-        f key value = pprintSymbol key 
-            .  (" ::= " ++) 
-            .  pprintExpression value
-            .  ("\n" ++)
+  where 
+    f :: Symbol -> Expression -> ShowS 
+    f key value = symbol key . 
+                  showString " ::= " . 
+                  expression value . 
+                  showString "\n"
 
-pprintSymbol :: Symbol -> ShowS
-pprintSymbol key s = ("<" ++ symbolName key ++ ">") ++ s
+    symbol key = showChar '<' . 
+                   showString (symbolName key) .
+                   showChar '>'
+    
+    expression = showIList " | " . map tokens
+    
+    tokens = showIList " " . map token
 
-pprintExpression :: Expression -> ShowS
-pprintExpression (e:e2:es) = pprintTokens e . (" | " ++) . pprintExpression (e2:es)
-pprintExpression [e]       = pprintTokens e
-
-pprintTokens (t:t2:ts) = pprintToken t . (" "++) . pprintTokens (t2:ts)
-pprintTokens [t]       = pprintToken t
-
-pprintToken (Ref (Symbol x)) s = ("<" ++ x ++ ">") ++ s
-pprintToken (Const str) s         = 
-    ("\"" ++ replace "\"" "\\\"" str ++ "\"") ++ s
-
+    showIList str ts = foldr (.) id newlist
+        where newlist = intersperse (showString str) ts
+    
+    token (Ref (Symbol x)) = showChar '<' . 
+                             showString x . 
+                             showChar '>'
+    token (Const str)      = showChar '"' . 
+                             showString (replace "\"" "\\\"" str) . 
+                             showChar '"'
 
 -- Parser
 
