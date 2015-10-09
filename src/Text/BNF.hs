@@ -81,7 +81,12 @@ reference :: Parser (Ambigious Token)
 reference = pure <$> Ref . Symbol <$> within '<' '>' <?> "reference"
 
 constant :: Parser (Ambigious Token)
-constant = pure <$> Const <$> (within '\'' '\'' <|> within '"' '"') <?> "constant"
+constant = pure <$> Const <$> constants <?> "constant"
+  where constants = choice [
+            within '\'' '\''
+          , within '"' '"'
+          , notFollowedBy letter >> many1 (noneOf "\n\t ")
+          ]
 
 symbol :: Parser Symbol
 symbol = Symbol <$> (within '<' '>' <|> many1 letter)
