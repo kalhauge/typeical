@@ -1,7 +1,10 @@
 import           System.Environment;
 
 import           Text.ParserCombinators.Parsec;
-import           Text.BNF;
+
+import           Text.Typeical.BNF;
+import           Text.Typeical.Readers.BNF;
+import           Text.Typeical.Writers.BNF;
 
 data Options = Options { optFilename :: String } deriving (Show)
 
@@ -14,4 +17,4 @@ main = do
     result <- parseFromFile bnf (optFilename options)
     case result of 
         Left parseError -> print parseError
-        Right bnf -> putStr $ pprintBNF bnf ""
+        Right bnf -> putStr $ writeBNF bnf
