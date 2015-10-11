@@ -42,7 +42,7 @@ constant = pure <$> Const <$> constants <?> "constant"
   where constants = choice [
             within '\'' '\''
           , within '"' '"'
-          , notFollowedBy letter >> many1 (noneOf "\n\t ")
+          , notFollowedBy letter >> many1 (noneOf "|\n\t ")
           ]
 
 symbol :: Parser Symbol

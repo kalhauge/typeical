@@ -5,6 +5,8 @@ import           Text.ParserCombinators.Parsec;
 import           Text.Typeical.BNF;
 import           Text.Typeical.Readers.BNF;
 import           Text.Typeical.Writers.BNF;
+import           Text.Typeical.Readers.SyntaxTree;
+import           Text.Typeical.Writers.SyntaxTree;
 
 data Options = Options { optFilename :: String } deriving (Show)
 

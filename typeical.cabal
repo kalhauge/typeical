@@ -53,7 +53,9 @@ executable typeical
   -- Modules included in this executable, other than Main.
   other-modules:       Text.Typeical.BNF,
                        Text.Typeical.Readers.BNF,
-                       Text.Typeical.Writers.BNF
+                       Text.Typeical.Writers.BNF,
+                       Text.Typeical.Readers.SyntaxTree,
+                       Text.Typeical.Writers.SyntaxTree
   
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:    

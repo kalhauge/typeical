@@ -1,4 +1,4 @@
 t ::= v | ( t ) | if t then t else t
 v ::= true | false
 
-> tree t: if ( if true then false else true ) then false else true
+!parse t: if ( if true then false else true ) then false else true

@@ -1,16 +1,20 @@
 module Text.Typeical.BNF ( BNF()
                          , fromList
                          , asMap
+                         , getExpression
                          
                          , Expression
                          
+                         , Term
+
                          , Token(..)
                          
                          , Symbol(..)
+                         
+                         , SyntaxTree(..)
                          ) where
 
 import qualified Data.Map as M;
-import Text.ParserCombinators.Parsec hiding (tokens, token)
 
 newtype BNF = BNF { innerMap :: M.Map Symbol Expression}
               deriving (Show)
@@ -26,16 +30,6 @@ getExpression bnf s = innerMap bnf M.! s
 asMap :: BNF -> M.Map Symbol Expression
 asMap = innerMap
 
-newtype SyntaxTree = SyntaxTree { tree :: (Term, [SyntaxTree]) }
-
--- Build a parser expr from a BNF
--- genParser :: BNF -> Symbol -> Parser ExprTree
--- genParser bnf sym = choice [genParser]
---     where expr = getExpression bnf sym
--- 
--- genParserTerm :: BNF -> Term -> Parser ExprTree
--- genParserTerm bnf term = try $ do
-
 -- A symbol is a recursive structure
 newtype Symbol = Symbol { symbolName :: String 
                         } deriving (Show, Eq, Ord)
@@ -46,3 +40,7 @@ data Token = Const String
 
 type Term = [Token]
 type Expression = [Term]
+
+newtype SyntaxTree = SyntaxTree { tree :: (Term, [SyntaxTree]) } deriving (Show)
+
+

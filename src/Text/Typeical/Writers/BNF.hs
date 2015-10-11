@@ -1,4 +1,4 @@
-module Text.Typeical.Writers.BNF (showBNF, writeBNF) where
+module Text.Typeical.Writers.BNF (showBNF, showTerm, writeBNF) where
 
 import           Text.Typeical.BNF
 
@@ -23,22 +23,24 @@ showBNF bnf ss = M.foldrWithKey f ss (asMap bnf)
                   showString "\n"
 
     symbol key = showChar '<' . 
-                   showString (symbolName key) .
-                   showChar '>'
+                 showString (symbolName key) .
+                 showChar '>'
     
-    expression = showIList " | " . map tokens
+    expression = showIList " | " . map showTerm 
     
-    tokens = showIList " " . map token
-
-    showIList str ts = foldr (.) id newlist
-        where newlist = intersperse (showString str) ts
-    
-    token (Ref (Symbol x)) = showChar '<' . 
+showTerm :: Term -> ShowS
+showTerm = showIList " " . map showToken
+ 
+showToken :: Token -> ShowS
+showToken (Ref (Symbol x)) = showChar '<' . 
                              showString x . 
                              showChar '>'
-    token (Const str)      = showChar '"' . 
+showToken (Const str)      = showChar '"' . 
                              showString (replace "\"" "\\\"" str) . 
                              showChar '"'
+
+showIList :: String -> [ShowS] -> ShowS
+showIList str ts = foldr (.) id $ intersperse (showString str) ts
 
 -- From Data.String.Utils, MissingH edited to use spiltOn
 replace :: Eq a => [a] -> [a] -> [a] -> [a]
