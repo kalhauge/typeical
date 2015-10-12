@@ -1,0 +1,5 @@
+t ::= v | ( t ) | t t
+v ::= \ var . t
+var ::= x | y | z | w
+
+
