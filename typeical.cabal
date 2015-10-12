@@ -16,7 +16,8 @@ version:             0.1.0.0
 synopsis:            A humane way to write types
 
 -- A longer description of the package.
--- description:         
+description:         This is a program to parse a lanuage that is great for
+                     creating toy languages and can be used to prove stuff about those languages.
 
 -- The license under which the package is released.
 license:             MIT
@@ -55,7 +56,8 @@ executable typeical
                        Text.Typeical.Readers.BNF,
                        Text.Typeical.Writers.BNF,
                        Text.Typeical.Readers.SyntaxTree,
-                       Text.Typeical.Writers.SyntaxTree
+                       Text.Typeical.Writers.SyntaxTree,
+                       Text.Typeical.Readers.Cmds
   
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:    
@@ -64,7 +66,8 @@ executable typeical
   build-depends:       base >=4.8 && <4.9, 
                        parsec,
                        containers,
-                       split
+                       split,
+                       mtl
   
   -- Directories containing source files.
   hs-source-dirs:      src
@@ -72,3 +75,7 @@ executable typeical
   -- Base language which the package is written in.
   default-language:    Haskell2010
   
+source-repository head
+    type: git
+    location: git://github.com/kalhauge/typeical.git
+    branch: master
