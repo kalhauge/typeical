@@ -17,13 +17,13 @@ bnf = try $ do
 bnfExpr :: Parser (Symbol, Ambigious Expression)
 bnfExpr = (,) <$> symbol <. string "::=" <.> expression <?> "bnfExpr"
 
-token :: Parser (Ambigious Token)
-token = reference <|> constant <|> ambigious <?> "token"
-
-tokens :: Parser (Ambigious [Token])
-tokens = sequence <$> helper
+term :: Parser (Ambigious Term)
+term = sequence <$> helper
   where rest = option [] (try $ skipSpaceOrIndent *> helper)
         helper = (:) <$> token <*> rest
+
+token :: Parser (Ambigious Token)
+token = reference <|> constant <|> ambigious <?> "token"
 
 ambigious :: Parser (Ambigious Token)
 ambigious = do 
@@ -51,7 +51,7 @@ symbol = Symbol <$> (within '<' '>' <|> many1 letter) <?> "symbol"
 expression :: Parser (Ambigious Expression)
 expression = sequence <$> helper
   where rest = option [] $ (skipSpaceOrIndent *> char '|') .> helper
-        helper = (:) <$> tokens <*> rest 
+        helper = (:) <$> term <*> rest 
 
 within :: Char -> Char -> Parser String 
 within begin end = char begin *> many1 (noneOf [end]) <* char end
