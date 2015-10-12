@@ -4,7 +4,7 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, base, containers, parsec, split, stdenv }:
+  f = { mkDerivation, base, containers, parsec, split, stdenv, ghc-mod }:
       mkDerivation {
         pname = "typeical";
         version = "0.1.0.0";
@@ -12,6 +12,7 @@ let
         isLibrary = false;
         isExecutable = true;
         executableHaskellDepends = [ base containers parsec split ];
+        buildDepends = [ ghc-mod ];
         description = "A humane way to write types";
         license = stdenv.lib.licenses.mit;
       };
