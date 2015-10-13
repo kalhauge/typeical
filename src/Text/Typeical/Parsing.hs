@@ -1,7 +1,30 @@
 -- This module holds helpers functions and the other things to help build
 -- parsers.
 {-# LANGUAGE FlexibleContexts #-}
-module Text.Typeical.Parsing where
+module Text.Typeical.Parsing ( ParserT
+                             , (<?>)
+                             , (<|>)
+                             , (<.>)
+                             , (<.)
+                             , (.>)
+                             , Stream
+                             , allowIndent
+                             , option
+                             , char
+                             , choice
+                             , letter
+                             , many1
+                             , noneOf
+                             , notFollowedBy
+                             , try
+                             , within
+                             , wrd
+                             , ws
+                             , endOfLine
+                             , string
+                             , endBy1
+                             ) 
+                             where
 
 import           Text.Parsec;
 import           Data.List;
@@ -15,9 +38,9 @@ within begin end = char begin *> many1 (noneOf [end]) <* char end
 -- | Allow indent, takes a parser which does not accept linebreaks and
 -- returns a new parser that can handle linebreaks, as long as it
 -- is indented. 
-allowIndent :: Stream String m Char => Int -> ParserT String m a -> ParserT String m a
+allowIndent :: (Stream String m Char) => Int -> ParserT String m a -> ParserT String m a
 allowIndent min parser = do 
-    s <- line                      -- parse the initial line
+    s <- line                       -- parse the initial line
     rest <- many $ parseIndent min  -- parse possible indents
     parseFromString parser $ unwords (s:rest)
 
