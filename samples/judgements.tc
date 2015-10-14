@@ -1,0 +1,45 @@
+t ::= v | ( t ) | if t then t else t
+v ::= true | false
+
+; This is the earliest kind of expression
+!t if ( if true then false else true ) then false else true
+
+; This is how I expect judgements to be made, saying that the 
+; judgement goes between two terms of type t.
+
+judgement t -> t
+
+---------- (E-Paran)
+( t ) -> t
+
+t1 -> t1'
+------------------------------ (E-If)
+if t1 then t2 else t3 -> t1'
+
+----------------------------- (E-IfTrue)
+if true then t2 else t3 -> t2
+
+------------------------------ (E-IfFalse)
+if false then t2 else t3 -> t3
+
+; Prove that the expression steps to something
+prove (if ( if true then false else true ) then false else false -> t)
+
+judgement t ->* t
+
+------- (E-Refl)
+t ->* t
+
+t -> t'
+------------ (E-Step)
+t ->* t'
+
+t -> t' 
+t' ->* t''
+------------ (E-Trans)
+t ->* t''
+
+; Prove that the expression eventualy steps to a value
+prove ( if ( if true then false else true ) then false else false ->* v )
+
+
