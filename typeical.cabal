@@ -62,7 +62,9 @@ executable typeical
                        Text.Typeical.Writers.BNF,
 
                        Text.Typeical.Readers.SyntaxTree,
-                       Text.Typeical.Writers.SyntaxTree
+                       Text.Typeical.Writers.SyntaxTree,
+                       
+                       Text.Typeical.Readers.InfRule
   
   -- LANGUAGE extensions used by modules in this package.
   other-extensions:    RankNTypes

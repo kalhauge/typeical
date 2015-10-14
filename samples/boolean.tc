@@ -25,7 +25,19 @@ judgement t --> t
 !& true --> true
 
 ; Judgements and context can hold variables.
+
 !& t --> t1'
 !t if t1 then t2 else t3
 !& if true then t2 else t3 --> t2
+
+; Our first inference rule
+
+----------- (E-Paran)
+( t ) --> t
+
+; Does also accept premisses
+
+t1 -> t1'
+------------------------------ (E-If)
+if t1 then t2 else t3 -> t1'
 
