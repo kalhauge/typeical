@@ -58,6 +58,8 @@ data Token = Const String
            | Ref Symbol
            deriving (Show)
 
-newtype SyntaxTree = SyntaxTree { tree :: (Term, [SyntaxTree]) } deriving (Show)
+data SyntaxTree = SyntaxTree Term [SyntaxTree]
+                | Var Symbol Int Int
+                deriving (Show)
 
 

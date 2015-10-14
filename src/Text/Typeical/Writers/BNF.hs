@@ -1,4 +1,4 @@
-module Text.Typeical.Writers.BNF (showBNF, showTerm, writeBNF, writeTerm) where
+module Text.Typeical.Writers.BNF (showBNF, showTerm, writeBNF, writeTerm, showSymbol) where
 
 import           Text.Typeical.Gramma
 
@@ -17,17 +17,16 @@ showBNF :: Gramma -> ShowS
 showBNF bnf ss = M.foldrWithKey f ss (asMap bnf)
   where 
     f :: Symbol -> Expression -> ShowS 
-    f key value = symbol key . 
+    f key value = showSymbol key . 
                   showString " ::= " . 
                   expression value . 
                   showString "\n"
-
-    symbol key = showChar '<' . 
-                 showString (symbolName key) .
-                 showChar '>'
     
     expression = showIList " | " . map showTerm 
-    
+   
+showSymbol :: Symbol -> ShowS
+showSymbol key = showChar '<' . showString (symbolName key) . showChar '>'
+
 writeTerm :: Term -> String
 writeTerm = flip showTerm ""
 

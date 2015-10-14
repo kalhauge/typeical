@@ -24,3 +24,8 @@ judgement t --> t
 !& true => true
 !& true --> true
 
+; Judgements and context can hold variables.
+!& t --> t1'
+!t if t1 then t2 else t3
+!& if true then t2 else t3 --> t2
+

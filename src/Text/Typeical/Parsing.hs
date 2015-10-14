@@ -14,6 +14,7 @@ module Text.Typeical.Parsing ( ParserT
                              , endBy1
                              , endOfLine
                              , letter
+                             , many
                              , many1
                              , noneOf
                              , notFollowedBy
@@ -29,6 +30,7 @@ module Text.Typeical.Parsing ( ParserT
                              , emptyLine
                              , restOfLine
                              , skipWs
+                             , nat
                              ) 
                              where
 
@@ -100,6 +102,10 @@ emptyLine = try $ ws `manyTill` endOfLine
 -- | Parses a comment
 comment :: Stream s m Char => ParserT s m String
 comment = try $ char ';' >> line
+
+-- | Natual number
+nat :: Stream s m Char => ParserT s m Int
+nat = read <$> many1 digit
 
 -- | inline compinator for skiping spaces
 infixl 4 <.>, .>, <.
