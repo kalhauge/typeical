@@ -11,6 +11,7 @@ without to much trouble.
 
 -   002: Gramma extensions. A gramma can be extended during the
     interpretation, but will override old rules, if named the same.
+    Example `samples/boolean.mkd`.
 
 -   003: Judgements. It should be possible to use special kinds of
     syntax called judgements. They are separate from the gramma.
