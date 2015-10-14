@@ -12,6 +12,12 @@ without to much trouble.
 -   003: Judgements. It should be possible to use special kinds of
     syntax called judgements. They are separate from the gramma.
 
+-   004: Inference rules. Create infrence rules using a simple syntax.
+    the inference rules should be able to be stored in the interpreter.
+
+-   005: Create Pandoc plug-in.
+
+
 ### Done
 
 -   001: Parse a gramma using a simplified bnf style, and allow that
