@@ -2,27 +2,28 @@
 -- parsers.
 {-# LANGUAGE FlexibleContexts #-}
 module Text.Typeical.Parsing ( ParserT
+                             , (.>)
+                             , (<.)
+                             , (<.>)
                              , (<?>)
                              , (<|>)
-                             , (<.>)
-                             , (<.)
-                             , (.>)
                              , Stream
                              , allowIndent
-                             , option
                              , char
                              , choice
+                             , endBy1
+                             , endOfLine
                              , letter
                              , many1
                              , noneOf
                              , notFollowedBy
+                             , option
+                             , spaces
+                             , string
                              , try
                              , within
                              , wrd
                              , ws
-                             , endOfLine
-                             , string
-                             , endBy1
                              ) 
                              where
 

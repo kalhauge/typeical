@@ -1,6 +1,6 @@
 module Text.Typeical.Writers.BNF (showBNF, showTerm, writeBNF) where
 
-import           Text.Typeical.BNF
+import           Text.Typeical.Gramma
 
 import           Data.Bifunctor;
 import           Data.Maybe;
@@ -10,10 +10,10 @@ import           Control.Monad;
 
 import qualified Data.Map as M;
 
-writeBNF :: BNF -> String
+writeBNF :: Gramma -> String
 writeBNF = flip showBNF ""
 
-showBNF :: BNF -> ShowS
+showBNF :: Gramma -> ShowS
 showBNF bnf ss = M.foldrWithKey f ss (asMap bnf)
   where 
     f :: Symbol -> Expression -> ShowS 

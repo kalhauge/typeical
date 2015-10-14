@@ -1,7 +1,7 @@
 module Text.Typeical.Writers.SyntaxTree (showSyntaxTree) where
 
 import Text.Typeical.Writers.BNF (showTerm);
-import Text.Typeical.BNF;
+import Text.Typeical.Gramma;
 
 showSyntaxTree :: SyntaxTree -> ShowS
 showSyntaxTree st = showSyntaxTreeIndent 0 st . showString "\n"

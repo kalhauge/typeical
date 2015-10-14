@@ -3,13 +3,13 @@ module Text.Typeical.Readers.BNF (bnf) where
 
 import           Text.Typeical.Parsing;
 
-import           Text.Typeical.BNF;
+import           Text.Typeical.Gramma;
 import           Control.Monad;
 
+-- | Ambigious parse result that still need a list of valid symbols
 type Ambigious e = [Symbol] -> e
 
-
-bnf :: Stream s m Char => ParserT s m BNF
+bnf :: Stream s m Char => ParserT s m Gramma
 bnf = try $ do 
   exprs <- bnfExpr `endBy1` try endOfLine
   let symbols = map fst exprs
