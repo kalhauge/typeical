@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Text.Typeical.Readers.BNF (bnf) where
+module Text.Typeical.Readers.BNF (bnf, symbol) where
 
 import           Text.Typeical.Parsing;
 
@@ -16,7 +16,7 @@ bnf = try $ do
   return . fromList $ zip symbols $ mapM snd exprs symbols
 
 bnfExpr :: Stream s m Char => ParserT s m (Symbol, Ambigious Expression)
-bnfExpr = (,) <$> symbol <. string "::=" <.> expression <?> "bnfExpr"
+bnfExpr = (,) <$> symbol <. string "::=" <.> expression <?> "bnf expression"
 
 expression :: Stream s m Char => ParserT s m (Ambigious Expression)
 expression = sequence <$> helper

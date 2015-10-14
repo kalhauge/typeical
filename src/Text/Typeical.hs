@@ -1,3 +1,3 @@
-module Text.Typeical (runInterpretor) where
+module Text.Typeical (runInterpreter) where
 
 import Text.Typeical.Interpreter;

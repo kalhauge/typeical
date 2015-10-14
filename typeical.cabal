@@ -55,6 +55,7 @@ executable typeical
   other-modules:       Text.Typeical.Gramma,
                        Text.Typeical.Parsing,
                        Text.Typeical.Control,
+                       Text.Typeical.Interpreter,
 
                        Text.Typeical.Readers.BNF,
                        Text.Typeical.Writers.BNF,
@@ -70,7 +71,8 @@ executable typeical
                        parsec,
                        containers,
                        split,
-                       mtl
+                       mtl,
+                       transformers
   
   -- Directories containing source files.
   hs-source-dirs:      src

@@ -9,4 +9,4 @@ parseOptions [filename] = Options { optFilename = filename }
 main :: IO ()
 main = do
     options <- parseOptions <$> getArgs
-    runInterpretor (optFilename options)
+    runInterpreter (optFilename options)

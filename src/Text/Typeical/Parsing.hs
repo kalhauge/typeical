@@ -24,6 +24,10 @@ module Text.Typeical.Parsing ( ParserT
                              , within
                              , wrd
                              , ws
+                             , line
+                             , comment
+                             , emptyLine
+                             , restOfLine
                              ) 
                              where
 
@@ -83,6 +87,18 @@ ws = oneOf " \t"
 -- | Skip alot of nonbreaking whitespaces
 skipWs :: Stream s m Char => ParserT s m ()
 skipWs = void $ many ws 
+
+-- | Parses all whitespaces, or comments until a newline
+restOfLine :: Stream s m Char => ParserT s m ()
+restOfLine = void $ emptyLine <|> comment
+
+-- | Parse an empty line
+emptyLine :: Stream s m Char => ParserT s m String
+emptyLine = try $ ws `manyTill` endOfLine 
+
+-- | Parses a comment
+comment :: Stream s m Char => ParserT s m String
+comment = try $ char ';' >> line
 
 -- | inline compinator for skiping spaces
 infixl 4 <.>, .>, <.
