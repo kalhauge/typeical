@@ -4,6 +4,7 @@ module Text.Typeical.Gramma ( Gramma()
                             , asMap
                             , getExpression
                             , extend
+                            , symbols
                             
                             , Expression
                             
@@ -18,8 +19,8 @@ module Text.Typeical.Gramma ( Gramma()
 
 import qualified Data.Map as M;
 
-newtype Gramma = Gramma { innerMap :: M.Map Symbol Expression}
-              deriving (Show)
+newtype Gramma = Gramma { innerMap :: M.Map Symbol Expression
+                        } deriving (Show)
 
 -- | Create a Gramma form a list of symbols and expressions
 fromList :: [(Symbol, Expression)] -> Gramma
@@ -36,6 +37,10 @@ getExpression bnf s = innerMap bnf M.! s
 -- | Return the Gramma as a map
 asMap :: Gramma -> M.Map Symbol Expression
 asMap = innerMap
+
+-- | Finds all the symbols in the gramma
+symbols :: Gramma -> [Symbol]
+symbols = M.keys . asMap
 
 -- | Empty gramma
 empty :: Gramma

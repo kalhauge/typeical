@@ -28,6 +28,7 @@ module Text.Typeical.Parsing ( ParserT
                              , comment
                              , emptyLine
                              , restOfLine
+                             , skipWs
                              ) 
                              where
 

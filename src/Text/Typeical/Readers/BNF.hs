@@ -1,19 +1,21 @@
 {-# LANGUAGE FlexibleContexts #-}
 module Text.Typeical.Readers.BNF (bnf, symbol) where
 
-import           Text.Typeical.Parsing;
+import           Text.Typeical.Parsing
 
-import           Text.Typeical.Gramma;
-import           Control.Monad;
+import           Data.List 
+
+import           Text.Typeical.Gramma
+import           Control.Monad
 
 -- | Ambigious parse result that still need a list of valid symbols
 type Ambigious e = [Symbol] -> e
 
-bnf :: Stream s m Char => ParserT s m Gramma
-bnf = try $ do 
+bnf :: Stream s m Char => [Symbol] -> ParserT s m Gramma
+bnf symbols' = try $ do 
   exprs <- bnfExpr `endBy1` try endOfLine
   let symbols = map fst exprs
-  return . fromList $ zip symbols $ mapM snd exprs symbols
+  return . fromList $ zip symbols $ mapM snd exprs (symbols' `union` symbols)
 
 bnfExpr :: Stream s m Char => ParserT s m (Symbol, Ambigious Expression)
 bnfExpr = (,) <$> symbol <. string "::=" <.> expression <?> "bnf expression"

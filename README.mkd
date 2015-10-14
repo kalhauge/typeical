@@ -9,10 +9,6 @@ without to much trouble.
 
 ### Todo
 
--   002: Gramma extensions. A gramma can be extended during the
-    interpretation, but will override old rules, if named the same.
-    Example `samples/boolean.mkd`.
-
 -   003: Judgements. It should be possible to use special kinds of
     syntax called judgements. They are separate from the gramma.
 
@@ -20,3 +16,8 @@ without to much trouble.
 
 -   001: Parse a gramma using a simplified bnf style, and allow that
     gramma to be able to parse code. Example `samples/boolean.tc`.
+
+-   002: Gramma extensions. A gramma can be extended during the
+    interpretation, but will override old rules, if named the same.
+    Also grammars can be left recursive.
+    Example `samples/boolean.tc`.

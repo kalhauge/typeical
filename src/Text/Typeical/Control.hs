@@ -2,7 +2,14 @@
 -- {-# LANGUAGE MultiParamTypeClasses #-}
 -- {-# LANGUAGE UndecidableInstances #-}
 
-module Text.Typeical.Control (evalT, runT, lift, extendGramma, Typeical, TypeicalT, getGramma) where
+module Text.Typeical.Control ( evalT
+                             , runT
+                             , lift
+                             , extendGramma
+                             , Typeical
+                             , TypeicalT
+                             , getGramma
+                             ) where
 
 import Control.Monad.State;
 import Control.Monad.Trans;

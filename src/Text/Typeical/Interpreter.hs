@@ -6,6 +6,8 @@ import System.IO;
 
 import Text.Parsec;
 
+import Text.Typeical.Gramma
+
 import Text.Typeical.Parsing
 import Text.Typeical.Control
 
@@ -28,7 +30,10 @@ stm = choice [ addGramma
 
 addGramma :: Interpreter ()
 addGramma = try $ do 
-  gramma <- bnf
+  g <- lift getGramma
+  
+  gramma <- bnf (symbols g)
+  
   lift $ extendGramma gramma
   
   gramma <- lift getGramma
@@ -38,8 +43,8 @@ addGramma = try $ do
   return ()
 
 parseExpr :: Interpreter ()
-parseExpr = try $ do 
-  s <- char '!' .> symbol
+parseExpr = do 
+  s <- try $ char '!' .> symbol -- no way back this is a parse expession
   gramma <- lift getGramma
   tree <- ws >> syntaxTree gramma s
   liftIO $ do putStr "Parse expression: " 
