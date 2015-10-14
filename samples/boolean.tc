@@ -4,7 +4,8 @@ v ::= true | false
 ; This is a comment 
 !t if ( if true then false else true ) then false else true
 
-t ::= v | ( t ) | if t then t else t | t & t | t "|" t
+; ... is a notion that you want to extend the semantics.
+t ::= ... | t & t | t "|" t
 
 ; This should also test if left recurstion is a problem
 ; Also this would be a great place to test prefix rules.

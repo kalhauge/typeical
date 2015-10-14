@@ -14,6 +14,8 @@ without to much trouble.
 
 -   005: Create Pandoc plug-in.
 
+-   006: Allow for extendsions of terms using a `...` notation.
+
 
 ### Done
 

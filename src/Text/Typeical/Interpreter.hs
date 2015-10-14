@@ -66,10 +66,9 @@ parseJudgement = do
 
 addNewJudgement :: Interpreter ()
 addNewJudgement = do 
-  try $ string "judgement" 
-  ws
+  try $ string "judgement"
   symbols <- lift activeSymbols
-  judgement <- concreteTerm symbols
+  judgement <- ws >> concreteTerm symbols
 
   lift . addJudgement . Judgement $ judgement
   
