@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Text.Typeical.Readers.BNF (bnf, symbol) where
+module Text.Typeical.Readers.BNF (bnf, symbol, concreteTerm) where
 
 import           Text.Typeical.Parsing
 
@@ -11,11 +11,17 @@ import           Control.Monad
 -- | Ambigious parse result that still need a list of valid symbols
 type Ambigious e = [Symbol] -> e
 
+concrete :: [Symbol] -> Ambigious e -> e
+concrete s = ($ s)
+
 bnf :: Stream s m Char => [Symbol] -> ParserT s m Gramma
 bnf symbols' = try $ do 
   exprs <- bnfExpr `endBy1` try endOfLine
   let symbols = map fst exprs
   return . fromList $ zip symbols $ mapM snd exprs (symbols' `union` symbols)
+
+concreteTerm :: Stream s m Char => [Symbol] -> ParserT s m Term
+concreteTerm s = concrete s <$> term
 
 bnfExpr :: Stream s m Char => ParserT s m (Symbol, Ambigious Expression)
 bnfExpr = (,) <$> symbol <. string "::=" <.> expression <?> "bnf expression"

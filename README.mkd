@@ -9,9 +9,6 @@ without to much trouble.
 
 ### Todo
 
--   003: Judgements. It should be possible to use special kinds of
-    syntax called judgements. They are separate from the gramma.
-
 -   004: Inference rules. Create infrence rules using a simple syntax.
     the inference rules should be able to be stored in the interpreter.
 
@@ -27,3 +24,8 @@ without to much trouble.
     interpretation, but will override old rules, if named the same.
     Also grammars can be left recursive.
     Example `samples/boolean.tc`.
+
+-   003: Judgements. It should be possible to use special kinds of
+    syntax called judgements. They are separate from the gramma. Example
+    `samples/boolean.tc`
+

@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Text.Typeical.Readers.SyntaxTree (syntaxTree) where
+module Text.Typeical.Readers.SyntaxTree (syntaxTree, anyTerm) where
 
 import           Text.Typeical.Parsing;
 import           Data.Maybe;
@@ -7,21 +7,22 @@ import           Data.List;
 
 import           Text.Typeical.Gramma;
 
-
 -- Build a parser expr from a Gramma
 syntaxTree :: Stream s m Char => Gramma -> Symbol -> ParserT s m SyntaxTree
 syntaxTree bnf sym = do
-    t <- oneOfTerms simple
+    t <- anyTerm bnf simple
     option t $ oneOfRecTerms t lrec
-    where expr = getExpression bnf sym
-          (lrec, simple) = partition (isLeftRec sym) expr
-          oneOfTerms = choice . map (term bnf)
+    where (lrec, simple) = partition (isLeftRec sym) $ getExpression bnf sym
           oneOfRecTerms t = choice . map (recTerm bnf t)
 
+-- | Figures out if a method is left recursive
 isLeftRec :: Symbol -> Term -> Bool
 isLeftRec sym (Ref s:_) = s == sym
 isLeftRec _ _           = False
 
+-- | parses any term
+anyTerm :: Stream s m Char => Gramma -> [Term] -> ParserT s m SyntaxTree
+anyTerm bnf = choice . map (term bnf)
 
 -- | Parses a term
 term :: Stream s m Char => Gramma -> Term -> ParserT s m SyntaxTree

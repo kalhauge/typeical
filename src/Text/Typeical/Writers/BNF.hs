@@ -1,4 +1,4 @@
-module Text.Typeical.Writers.BNF (showBNF, showTerm, writeBNF) where
+module Text.Typeical.Writers.BNF (showBNF, showTerm, writeBNF, writeTerm) where
 
 import           Text.Typeical.Gramma
 
@@ -28,6 +28,9 @@ showBNF bnf ss = M.foldrWithKey f ss (asMap bnf)
     
     expression = showIList " | " . map showTerm 
     
+writeTerm :: Term -> String
+writeTerm = flip showTerm ""
+
 showTerm :: Term -> ShowS
 showTerm = showIList " " . map showToken
  

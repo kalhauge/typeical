@@ -10,3 +10,16 @@ t ::= v | ( t ) | if t then t else t | t & t | t "|" t
 ; Also this would be a great place to test prefix rules.
 !t if true & true | false | false | true then true else false
 
+; big step judgement 
+judgement t => t
+
+; Special syntax for parsing judgements
+!& true => true
+
+; t steps to t
+judgement t --> t
+
+; Can have mulitble judegements
+!& true => true
+!& true --> true
+
