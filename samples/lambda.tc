@@ -1,5 +1,5 @@
-t ::= v | ( t ) | t t
+t ::= v | var | ( t ) | t t
 v ::= \ var . t
 var ::= x | y | z | w
 
-
+!t (\ x . x x) \ x . x x
