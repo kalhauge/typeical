@@ -33,8 +33,8 @@ stm = choice [ addGramma
 
 addGramma :: Interpreter ()
 addGramma = try $ do 
-  symbols <- lift activeSymbols 
-  gramma <- bnf symbols
+  gramma' <- lift getGramma
+  gramma <- bnf gramma'
   
   lift $ extendGramma gramma
   

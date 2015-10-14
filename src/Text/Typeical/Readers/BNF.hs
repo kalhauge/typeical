@@ -14,22 +14,32 @@ type Ambigious e = [Symbol] -> e
 concrete :: [Symbol] -> Ambigious e -> e
 concrete s = ($ s)
 
-bnf :: Stream s m Char => [Symbol] -> ParserT s m Gramma
-bnf symbols' = try $ do 
-  exprs <- bnfExpr `endBy1` try endOfLine
-  let symbols = map fst exprs
-  return . fromList $ zip symbols $ mapM snd exprs (symbols' `union` symbols)
+-- | Parse a gramma using a old possible empty gramma
+bnf :: Stream s m Char => Gramma -> ParserT s m Gramma
+bnf gramma = try $ do 
+  exprs <- bnfExpr gramma `endBy1` try endOfLine
+  let ss = map fst exprs
+  return . fromList $ zip ss $ mapM snd exprs (symbols gramma `union` ss)
 
 concreteTerm :: Stream s m Char => [Symbol] -> ParserT s m Term
 concreteTerm s = concrete s <$> term
 
-bnfExpr :: Stream s m Char => ParserT s m (Symbol, Ambigious Expression)
-bnfExpr = (,) <$> symbol <. string "::=" <.> expression <?> "bnf expression"
+bnfExpr :: Stream s m Char => Gramma -> ParserT s m (Symbol, Ambigious Expression)
+bnfExpr g = ( do 
+    s <- symbol <. string "::="
+    expr <- skipWs >> expression (getExpression g s)
+    return (s, expr)
+  ) <?> "bnf expression"
 
-expression :: Stream s m Char => ParserT s m (Ambigious Expression)
-expression = sequence <$> helper
+expression :: Stream s m Char => Expression -> ParserT s m (Ambigious Expression)
+expression expr = sequence <$> helper
   where rest = option [] $ (ws *> char '|') .> helper
-        helper = (:) <$> term <*> rest 
+        helper = choice [
+            (++) <$> do 
+                 try $ string "..." 
+                 return $ map const expr
+            , (:) <$> term
+            ] <*> rest 
 
 term :: Stream s m Char => ParserT s m (Ambigious Term)
 term = sequence <$> helper
