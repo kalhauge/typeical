@@ -17,6 +17,7 @@ module Text.Typeical.Parsing ( ParserT
                              , many
                              , many1
                              , noneOf
+                             , oneOf
                              , notFollowedBy
                              , option
                              , spaces

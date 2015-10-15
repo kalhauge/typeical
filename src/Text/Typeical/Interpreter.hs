@@ -14,6 +14,7 @@ import Text.Typeical.Proof
 
 import Text.Typeical.Readers.BNF 
 import Text.Typeical.Readers.SyntaxTree
+import Text.Typeical.Readers.InfRule
 
 import Text.Typeical.Writers.BNF
 import Text.Typeical.Writers.SyntaxTree
@@ -26,6 +27,7 @@ stms = void $ stm `manyTill` eof;
 stm :: Interpreter ()
 stm = choice [ addGramma
              , addNewJudgement
+             , addNewInfRule
              , parseExpr
              , parseJudgement
              , restOfLine 
@@ -52,17 +54,17 @@ parseExpr = do
   liftIO $ do putStr "Parse expression: " 
               putStr . writeSyntaxExpr $ tree
               putStr "\n"
-              putStr . writeSyntaxTree $ tree
+              -- putStr . writeSyntaxTree $ tree
 
 parseJudgement :: Interpreter ()
 parseJudgement = do 
   try $ string "!&" -- no way back this is a parse judgement 
   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
-  tree <- ws >> anyTerm gramma (map syntax jm)
+  tree <- ws >> judgement gramma jm
   liftIO $ do putStr "Parse expression: " 
               putStr . writeSyntaxExpr $ tree
               putStr "\n"
-              putStr . writeSyntaxTree $ tree
+              -- putStr . writeSyntaxTree $ tree
 
 addNewJudgement :: Interpreter ()
 addNewJudgement = do 
@@ -74,6 +76,14 @@ addNewJudgement = do
   
   liftIO $ do putStr "Added Judgement: " 
               putStr . writeTerm $ judgement
+              putStr "\n"
+
+addNewInfRule :: Interpreter ()
+addNewInfRule = do 
+  (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
+  inf' <- infRule gramma jm
+  liftIO $ do putStr "Found Inference Rule:\n" 
+              print inf'
               putStr "\n"
 
 runInterpreter :: FilePath -> IO ()

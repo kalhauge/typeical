@@ -10,6 +10,6 @@ newtype Judgement = Judgement { syntax :: Term
 
 data InfRule = InfRule { id :: String 
                        , premisses :: [SyntaxTree]
-                       , conclusion :: SyntaxTree
+                       , conclusion :: SyntaxTree 
                        } deriving (Show)
 
