@@ -15,6 +15,8 @@ module Text.Typeical.Parsing ( ParserT
                              , endOfLine
                              , letter
                              , many
+                             , endBy
+                             , sepBy1
                              , many1
                              , noneOf
                              , oneOf

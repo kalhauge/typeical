@@ -48,7 +48,7 @@ t3 => v
 --------------------------  (B-IfFalse)
 if t1 then t2 else t3 => v 
 
- t1 => true      t2 => v
+t1 => true  t2 => v
 --------------------------  (B-IfTrue)
 if t1 then t2 else t3 => v
 
