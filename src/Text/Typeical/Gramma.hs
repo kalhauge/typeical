@@ -59,7 +59,7 @@ data Token = Const String
            | Ref Symbol
            deriving (Show, Eq)
 
-data Variable = Variable Symbol Int Int deriving (Show, Eq)
+data Variable = Variable Symbol Int Int deriving (Show, Eq, Ord)
 
 data SyntaxTree = SyntaxTree Term [SyntaxTree]
                 | Var Variable

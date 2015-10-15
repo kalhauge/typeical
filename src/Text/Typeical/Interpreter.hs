@@ -41,15 +41,18 @@ patternMatch = do
    (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
    skipWs 
    j1 <- skipWs >> judgement gramma jm
-   string "with"  
+   skipWs >> string "with" >> skipWs
    j2 <- skipWs >> judgement gramma jm
-   return ()
-  -- matches <- match j1 j2
-  -- case matches of
-  --     Left counter -> liftIO $ do
-  --        putStr "Could not match expressions:"
-  --        print counter
-  --     Right example -> liftIO $ print example
+   case match j1 j2 of
+     Left counter -> liftIO $ do
+       putStr "Could not match expressions:"
+       print counter
+     Right example -> liftIO $ do
+       putStr . writeSyntaxExpr $ j1
+       putStr " matches with "
+       putStr . writeSyntaxExpr $ j2
+       putStr "\n"
+       print example
 
 -- prove :: Interpreter ()
 -- prove = do

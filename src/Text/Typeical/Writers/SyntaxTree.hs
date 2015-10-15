@@ -1,6 +1,7 @@
 module Text.Typeical.Writers.SyntaxTree ( showSyntaxTree
                                         , writeSyntaxTree
                                         , showSyntaxExpr
+                                        , showVariable
                                         , writeSyntaxExpr) where
 
 import Text.Typeical.Writers.BNF (showTerm, showSymbol);
