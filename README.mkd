@@ -9,9 +9,6 @@ without to much trouble.
 
 ### Todo
 
--   004: Inference rules. Create infrence rules using a simple syntax.
-    the inference rules should be able to be stored in the interpreter.
-
 -   005: Create Pandoc plug-in.
 
 -   008: Pattern match. Two formulars should be able to pattern match
@@ -43,3 +40,7 @@ without to much trouble.
     format `<symbol> [<number>] [many "'"]`, a simple example is `t1'`
     assuming that there exists a symbol `t`. Also `<t>10'` is a valid 
     variable, though not recommended.
+
+-   004: Inference rules. Create infrence rules using a simple syntax.
+    the inference rules should be able to be stored in the interpreter.
+

@@ -82,6 +82,7 @@ addNewInfRule :: Interpreter ()
 addNewInfRule = do 
   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
   inf' <- infRule gramma jm
+  lift $ addRule inf'
   liftIO $ do putStr "Found Inference Rule:\n" 
               print inf'
               putStr "\n"
