@@ -14,6 +14,15 @@ without to much trouble.
 
 -   005: Create Pandoc plug-in.
 
+-   008: Pattern match. Two formulars should be able to pattern match
+    against each other. If none contains variables they should be
+    presented as a solution.
+
+-   009: Provide simple proofs. Create existence proofs on judgements, 
+    using the inference rules. 
+
+-   010: Be able to print the inference rules back in a readable format.
+
 ### Done
 
 -   001: Parse a gramma using a simplified bnf style, and allow that
@@ -34,4 +43,3 @@ without to much trouble.
     format `<symbol> [<number>] [many "'"]`, a simple example is `t1'`
     assuming that there exists a symbol `t`. Also `<t>10'` is a valid 
     variable, though not recommended.
-
