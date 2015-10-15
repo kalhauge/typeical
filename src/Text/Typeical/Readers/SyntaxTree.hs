@@ -52,7 +52,7 @@ token bnf (Ref sym) = Just <$> choice [
                       return s
                     major <- option (-1) nat
                     minor <- option 0 $ length <$> many (char '\'')
-                    return $ Var s major minor
+                    return . Var $ Variable s major minor
                 ) <?> "variable"
               ]
 

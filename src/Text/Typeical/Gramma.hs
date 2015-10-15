@@ -15,6 +15,7 @@ module Text.Typeical.Gramma ( Gramma()
                             , Symbol(..)
                             
                             , SyntaxTree(..)
+                            , Variable(..)
                             ) where
 
 import qualified Data.Map as M;
@@ -56,10 +57,12 @@ type Term = [Token]
 
 data Token = Const String 
            | Ref Symbol
-           deriving (Show)
+           deriving (Show, Eq)
+
+data Variable = Variable Symbol Int Int deriving (Show, Eq)
 
 data SyntaxTree = SyntaxTree Term [SyntaxTree]
-                | Var Symbol Int Int
-                deriving (Show)
+                | Var Variable
+                deriving (Show, Eq)
 
 

@@ -28,10 +28,35 @@ stm :: Interpreter ()
 stm = choice [ addGramma
              , addNewJudgement
              , addNewInfRule
+             , patternMatch
+          --   , prove
              , parseExpr
              , parseJudgement
              , restOfLine 
              ] <?> "statement"
+
+patternMatch :: Interpreter ()
+patternMatch = do
+   try $ id <$> (string "pattern" .> string "match")
+   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
+   skipWs 
+   j1 <- skipWs >> judgement gramma jm
+   string "with"  
+   j2 <- skipWs >> judgement gramma jm
+   return ()
+  -- matches <- match j1 j2
+  -- case matches of
+  --     Left counter -> liftIO $ do
+  --        putStr "Could not match expressions:"
+  --        print counter
+  --     Right example -> liftIO $ print example
+
+-- prove :: Interpreter ()
+-- prove = do
+--   try $ string "prove"
+--   
+--   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
+--   tree         <- skipWs >> judgement gramma jm
 
 addGramma :: Interpreter ()
 addGramma = try $ do 
@@ -46,25 +71,22 @@ addGramma = try $ do
 
   return ()
 
+printExpr :: SyntaxTree -> IO ()
+printExpr tree = do putStr "Parse expression: " 
+                    putStr . writeSyntaxExpr $ tree
+                    putStr "\n"
+
 parseExpr :: Interpreter ()
 parseExpr = do 
   s <- try $ char '!' .> symbol -- no way back this is a parse expession
   gramma <- lift getGramma
-  tree <- ws >> syntaxTree gramma s
-  liftIO $ do putStr "Parse expression: " 
-              putStr . writeSyntaxExpr $ tree
-              putStr "\n"
-              -- putStr . writeSyntaxTree $ tree
+  ws >> syntaxTree gramma s >>= liftIO . printExpr
 
 parseJudgement :: Interpreter ()
 parseJudgement = do 
   try $ string "!&" -- no way back this is a parse judgement 
   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
-  tree <- ws >> judgement gramma jm
-  liftIO $ do putStr "Parse expression: " 
-              putStr . writeSyntaxExpr $ tree
-              putStr "\n"
-              -- putStr . writeSyntaxTree $ tree
+  ws >> judgement gramma jm >>= liftIO . printExpr 
 
 addNewJudgement :: Interpreter ()
 addNewJudgement = do 

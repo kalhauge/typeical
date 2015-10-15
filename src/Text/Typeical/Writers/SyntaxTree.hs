@@ -18,22 +18,23 @@ writeSyntaxExpr :: SyntaxTree -> String
 writeSyntaxExpr = flip showSyntaxExpr ""
 
 showSyntaxExpr :: SyntaxTree -> ShowS
+showSyntaxExpr (Var variable) = showVariable variable
 showSyntaxExpr (SyntaxTree term subtrees) = 
     doAll . reverse . intersperse (showChar ' ') $ printers
-    where (_, printers) = foldl helper (subtrees, []) term  
-          helper :: ([SyntaxTree], [ShowS]) 
-                -> Token 
-                -> ([SyntaxTree], [ShowS])
-          helper (ss,   ts) (Const c) = (ss, showString c : ts)
-          helper (s:ss, ts) (Ref _)   = (ss, showSyntaxExpr s : ts)
-showSyntaxExpr (Var symbol major minor) = 
+    where 
+      (_, printers) = foldl helper (subtrees, []) term  
+      helper :: ([SyntaxTree], [ShowS]) -> Token -> ([SyntaxTree], [ShowS])
+      helper (ss,   ts) (Const c) = (ss, showString c : ts)
+      helper (s:ss, ts) (Ref _)   = (ss, showSyntaxExpr s : ts)
+
+showVariable :: Variable -> ShowS
+showVariable (Variable symbol major minor) =  
     symbolName symbol . showMajor . showString (take minor $ cycle "'")
     where
       showMajor = if major >= 0 then shows major else id
       symbolName symbol@(Symbol s) 
         | length s == 1 = showString s
         | otherwise     = showSymbol symbol
-
 
 showSyntaxTreeIndent :: Int -> SyntaxTree -> ShowS
 showSyntaxTreeIndent indent (SyntaxTree term subtrees) = 
