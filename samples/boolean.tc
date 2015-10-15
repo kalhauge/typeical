@@ -38,6 +38,18 @@ judgement t --> t
 ; Does also accept premisses
 
 t1 --> t1'
------------------------------- (E-If)
+------------------------------ E-If
 if t1 then t2 else t3 --> t1'
+
+; Does also accept two formats 
+
+t1 => false
+t3 => v
+--------------------------  (B-IfFalse)
+if t1 then t2 else t3 => v 
+
+ t1 => true      t2 => v
+--------------------------  (B-IfTrue)
+if t1 then t2 else t3 => v
+
 
