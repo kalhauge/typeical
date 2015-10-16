@@ -29,7 +29,7 @@ stm = choice [ addGramma
              , addNewJudgement
              , addNewInfRule
              , patternMatch
-          --   , prove
+             , proveExpr
              , parseExpr
              , parseJudgement
              , restOfLine 
@@ -44,22 +44,32 @@ patternMatch = do
    skipWs >> string "with" >> skipWs
    j2 <- skipWs >> judgement gramma jm
    case match j1 j2 of
-     Left counter -> liftIO $ do
-       putStr "Could not match expressions:"
-       print counter
-     Right example -> liftIO $ do
+     Nothing -> liftIO . putStr $ "Could not match expressions.\n"
+     Just match' -> liftIO $ do
        putStr . writeSyntaxExpr $ j1
        putStr " matches with "
        putStr . writeSyntaxExpr $ j2
        putStr "\n"
-       print example
+       print match'
 
--- prove :: Interpreter ()
--- prove = do
---   try $ string "prove"
---   
---   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
---   tree         <- skipWs >> judgement gramma jm
+proveExpr :: Interpreter ()
+proveExpr = do
+  try $ string "prove"
+  
+  (gramma, jm, rules) <- lift $ (,,) <$> getGramma <*> getJudgements <*> getRules
+  tree         <- skipWs >> judgement gramma jm
+
+  case prove rules tree of
+    Nothing -> liftIO $ do
+      putStr "Could not prove "
+      putStr . writeSyntaxExpr $ tree
+      putStr ".\n"
+    Just solution -> liftIO $ do
+      putStr "Solution found to "
+      putStr . writeSyntaxExpr $ tree
+      putStr ":\n"
+      print solution
+  
 
 addGramma :: Interpreter ()
 addGramma = try $ do 
@@ -108,9 +118,9 @@ addNewInfRule = do
   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
   inf' <- infRule gramma jm
   lift $ addRule inf'
-  liftIO $ do putStr "Found Inference Rule:\n" 
-              print inf'
-              putStr "\n"
+  -- liftIO $ do putStr "Found Inference Rule:\n" 
+  --             print inf'
+  --             putStr "\n"
 
 runInterpreter :: FilePath -> IO ()
 runInterpreter t = do 

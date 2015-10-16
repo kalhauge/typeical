@@ -5,40 +5,32 @@ judgement t --> t
 
 ; We can only pattern match on judgements this should return
 ; t1 = t, t = true
-pattern match 
-    ( true ) --> t1
-  with 
-    ( t ) --> t
+pattern match ( true ) --> t1 with ( t ) --> t
 
-;
+; This should not work 
+pattern match ( true ) --> false with ( t ) --> t
 
-; judgement isTrue t
+t --> t'
+---------------- (E-Paran1)
+( t ) --> ( t' )
 
-; ----------- (E-Yes)
-; isTrue true
-; 
-; ; Should show the prove t = true
-; prove isTrue t
-; 
-; ; Should return , not posible _|_
-; prove isTrue false
+----------- (E-Paran1)
+( v ) --> v
 
-; 
-; ---------- (E-Paran)
-; ( t ) --> t
-; 
-; t1 --> t1'
-; ------------------------------ (E-If)
-; if t1 then t2 else t3 --> t1'
-; 
-; ----------------------------- (E-IfTrue)
-; if true then t2 else t3 --> t2
-; 
-; ------------------------------ (E-IfFalse)
-; if false then t2 else t3 --> t3
-; 
-; ; Prove that the expression steps to something
-; prove (if ( if true then false else true ) then false else false --> t)
+t1 --> t1'
+------------------------------------------------ (E-If)
+if t1 then t2 else t3 --> if t1' then t2 else t3
+
+----------------------------- (E-IfTrue)
+if true then t2 else t3 --> t2
+
+------------------------------ (E-IfFalse)
+if false then t2 else t3 --> t3
+
+; Prove that the expression steps to something
+prove if ( if true then false else true ) then false else false --> t
+
+
 ; 
 ; judgement t -->* t
 ; 
