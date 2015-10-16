@@ -17,6 +17,7 @@ module Text.Typeical.Parsing ( ParserT
                              , many
                              , endBy
                              , sepBy1
+                             , sepBy
                              , many1
                              , noneOf
                              , oneOf
@@ -62,7 +63,7 @@ parseIndent min = try $ count min ws >> line
 
 -- | Parses a line, e.g. all charactors until a endOfLine
 line :: Stream s m Char => ParserT s m String
-line = manyTill anyChar $ try endOfLine
+line = manyTill anyChar endOfLine
 
 -- | Parse the content of a string, borrowed from Pandoc
 parseFromString :: Monad m => ParserT String m a -> String -> ParserT String m a

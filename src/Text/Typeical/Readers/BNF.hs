@@ -4,6 +4,7 @@ module Text.Typeical.Readers.BNF (bnf, symbol, concreteTerm) where
 import           Text.Typeical.Parsing
 
 import           Data.List 
+import           Debug.Trace 
 
 import           Text.Typeical.Gramma
 import           Control.Monad
@@ -16,8 +17,10 @@ concrete s = ($ s)
 
 -- | Parse a gramma using a old possible empty gramma
 bnf :: Stream s m Char => Gramma -> ParserT s m Gramma
-bnf gramma = try $ do 
-  exprs <- bnfExpr gramma `endBy1` try endOfLine
+bnf gramma = do
+  traceM "Enter Gramma"
+  exprs <- (bnfExpr gramma <?> "bnf expression") `endBy1` restOfLine
+  traceM "Done Gramma"
   let ss = map fst exprs
   return . fromList $ zip ss $ mapM snd exprs (symbols gramma `union` ss)
 
@@ -25,11 +28,10 @@ concreteTerm :: Stream s m Char => [Symbol] -> ParserT s m Term
 concreteTerm s = concrete s <$> term
 
 bnfExpr :: Stream s m Char => Gramma -> ParserT s m (Symbol, Ambigious Expression)
-bnfExpr g = ( do 
-    s <- symbol <. string "::="
+bnfExpr g = do 
+    s <- try (symbol <. string "::=")
     expr <- skipWs >> expression (getExpression g s)
     return (s, expr)
-  ) <?> "bnf expression"
 
 expression :: Stream s m Char => Expression -> ParserT s m (Ambigious Expression)
 expression expr = sequence <$> helper

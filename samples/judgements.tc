@@ -30,23 +30,21 @@ if false then t2 else t3 --> t3
 ; Prove that the expression steps to something
 prove if ( if true then false else true ) then false else false --> t
 
+judgement t -->* t
 
-; 
-; judgement t -->* t
-; 
-; ------- (E-Refl)
-; t -->* t
-; 
-; t --> t'
-; ------------ (E-Step)
-; t -->* t'
-; 
-; t --> t' 
-; t' -->* t''
-; ------------ (E-Trans)
-; t -->* t''
-; 
-; ; Prove that the expression eventualy steps to a value
-; prove ( if ( if true then false else true ) then false else false -->* v )
+-------- (E-Refl)
+t -->* t
+
+t --> t'
+------------ (E-Step)
+t -->* t'
+
+t --> t'  
+t' -->* t''
+------------ (E-Trans)
+t -->* t''
+
+; Prove that the expression eventualy steps to a value
+prove if ( if true then false else true ) then false else false -->* v
 
 

@@ -95,14 +95,14 @@ proveOne rules st inf = do
     -- Try to match the conclusion
     Match (outer, inner) <- match st $ conclusion inf
 
-    traceM $ showSyntaxExpr st ""
+    -- traceM $ showSyntaxExpr st ""
 
-    traceM $ "inner  (" ++ ruleId inf ++ ") " ++ show inner
+    -- traceM $ "inner  (" ++ ruleId inf ++ ") " ++ show inner
     -- Try to prove the first permis in the inference rules using the inner
     -- solution. Use this updated solution to prove the next premise. 
     inner' <- foldM proveOne' inner $ premises inf
     
-    traceM $ "inner' (" ++ ruleId inf ++ ") " ++ show inner'
+    -- traceM $ "inner' (" ++ ruleId inf ++ ") " ++ show inner'
 
     -- Hopefully we have a solution that is able to prove all premises, now
     -- we have to check is the outer solution, depends on any instances
@@ -111,8 +111,8 @@ proveOne rules st inf = do
     -- TODO: this might not take variable overlap into account.
     let outer' = Solution $ M.map (substitude inner') $ scope outer
 
-    traceM $ "outer  (" ++ ruleId inf ++ ") " ++ show outer
-    traceM $ "outer' (" ++ ruleId inf ++ ") " ++ show outer'
+    -- traceM $ "outer  (" ++ ruleId inf ++ ") " ++ show outer
+    -- traceM $ "outer' (" ++ ruleId inf ++ ") " ++ show outer'
 
     return outer'
     

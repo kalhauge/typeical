@@ -25,13 +25,14 @@ isLeftRec _ _           = False
 
 -- | parses any term
 anyTerm :: Stream s m Char => Gramma -> [Term] -> ParserT s m SyntaxTree
-anyTerm bnf = choice . map (term bnf)
+anyTerm bnf = choice . map (try . term bnf)
 
 -- | Parses a term
 term :: Stream s m Char => Gramma -> Term -> ParserT s m SyntaxTree
-term bnf term = try $ do
+term bnf term = do
     values <- catMaybes <$> sep parsers spaces 
     return $ SyntaxTree term values
+  <?> "term"
   where parsers = map (token bnf) term
 
 -- | Parse a left recursive term with the term already parsed
