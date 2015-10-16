@@ -121,3 +121,6 @@ p .> s = p >> skipWs >> s
 
 (<.) :: Stream s m Char => ParserT s m a -> ParserT s m b -> ParserT s m a
 p <. s = p >>= \x -> skipWs >> s >> return x
+
+(>>~) :: Monad m => m a -> m b -> m a
+a >>~ b = do a' <- a; b; return a';

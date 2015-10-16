@@ -17,6 +17,10 @@ t --> t'
 ----------- (E-Paran1)
 ( v ) --> v
 
+; Lets first work with the parns
+
+prove ( true ) -> true 
+
 t1 --> t1'
 ------------------------------------------------ (E-If)
 if t1 then t2 else t3 --> if t1' then t2 else t3

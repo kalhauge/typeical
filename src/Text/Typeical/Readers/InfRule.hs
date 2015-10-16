@@ -21,14 +21,13 @@ infRule g js = do
 oneLinePremise :: Stream s m Char => Gramma -> [Judgement] -> ParserT s m [SyntaxTree]
 oneLinePremise g js = do
     j <- judgement g js 
-    js <- option [] $ try $ skipWs >> oneLinePremise g js
-    restOfLine
+    js <- option [] $ try (skipWs >> oneLinePremise g js)
     return (j:js)
   <?> "one line premise"
 
 multiLinePremise :: Stream s m Char => Gramma -> [Judgement] -> ParserT s m [SyntaxTree]
 multiLinePremise g js = do 
-  premisLines <- many $ oneLinePremise g js
+  premisLines <- many $ oneLinePremise g js >>~ restOfLine
   return . concat $ premisLines
 
 rulerWithId :: Stream s m Char => ParserT s m String
@@ -38,4 +37,3 @@ rulerWithId = do
     id <- choice [ within '(' ')', many1 $ letter <|> oneOf "-" ]
     restOfLine 
     return id
-

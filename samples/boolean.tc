@@ -1,9 +1,7 @@
 t ::= v | ( t ) | if t then t else t
 v ::= true | false
 
-; This is a comment 
-!t if ( if true then false else true ) then false else true
-
+; This is a comment !t if ( if true then false else true ) then false else true 
 ; ... is a notion that you want to extend the semantics.
 t ::= ... | t & t | t "|" t
 
@@ -43,12 +41,12 @@ if t1 then t2 else t3 --> t1'
 
 ; Does also accept two formats 
 
-t1 => false
+t1 => false 
 t3 => v
 --------------------------  (B-IfFalse)
 if t1 then t2 else t3 => v 
 
-t1 => true  t2 => v
+t1 => true     t2 => v
 --------------------------  (B-IfTrue)
 if t1 then t2 else t3 => v
 
