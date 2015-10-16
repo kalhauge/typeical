@@ -6,6 +6,7 @@ module Text.Typeical.Parsing ( ParserT
                              , (<.)
                              , (<.>)
                              , (<?>)
+                             , (>>~)
                              , (<|>)
                              , Stream
                              , allowIndent

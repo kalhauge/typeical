@@ -40,10 +40,13 @@ rightSolution = snd . solutions
 newtype CounterExample = CounterExample { failed :: [(Term, Term)]}
 
 instance Show Solution where
-  showsPrec _ (Solution vs) s = foldr ($) s $ 
-      intersperse (showString ", ") $ 
-        map (uncurry showSingleAss) $ M.assocs vs
-    where showSingleAss k a = showVariable k . showString " = " . showSyntaxExpr a
+  showsPrec _ (Solution vs) = 
+      showString "Solution = [" . list . showString "]"
+    where showSingleAss k a = 
+            showVariable k . showString " = " . showSyntaxExpr a
+          list s = foldr ($) s $ 
+            intersperse (showString ", ") $ 
+              map (uncurry showSingleAss) $ M.assocs vs
 
 instance Show Match where
   showsPrec _ (Match (vs1, vs2)) = 
@@ -90,6 +93,8 @@ substitude s var@(Var v) = fromMaybe var $ get v s
 prove :: [InfRule] -> SyntaxTree -> Maybe Solution
 prove rules st = msum $ map (proveOne rules st) rules
 
+updateSolution s new = Solution $ M.union (scope s) (scope new)
+
 proveOne :: [InfRule] -> SyntaxTree -> InfRule -> Maybe Solution
 proveOne rules st inf = do 
     -- Try to match the conclusion
@@ -100,7 +105,7 @@ proveOne rules st inf = do
     -- traceM $ "inner  (" ++ ruleId inf ++ ") " ++ show inner
     -- Try to prove the first permis in the inference rules using the inner
     -- solution. Use this updated solution to prove the next premise. 
-    inner' <- foldM proveOne' inner $ premises inf
+    inner' <- updateSolution inner <$> foldM proveOne' inner (premises inf)
     
     -- traceM $ "inner' (" ++ ruleId inf ++ ") " ++ show inner'
 
@@ -122,5 +127,5 @@ proveOne rules st inf = do
     proveOne' :: Solution -> SyntaxTree -> Maybe Solution
     proveOne' s st = do
       newSolution <- prove rules (substitude s st) 
-      return . Solution $ M.union (scope s) (scope newSolution)
+      return . updateSolution s $ newSolution
       -- ^ Merge with the old solutions.. because..

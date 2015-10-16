@@ -10,16 +10,24 @@ pattern match ( true ) --> t1 with ( t ) --> t
 ; This should not work 
 pattern match ( true ) --> false with ( t ) --> t
 
+----------- (E-Paran1)
+( v ) --> v
+
 t --> t'
 ---------------- (E-Paran1)
 ( t ) --> ( t' )
 
------------ (E-Paran1)
-( v ) --> v
-
 ; Lets first work with the parns
 
-prove ( true ) -> true 
+prove (true) --> true 
+
+prove (true) --> t
+
+prove (if true then true else false) --> t
+
+prove ((true)) --> t
+
+!& ( v ) --> v 
 
 t1 --> t1'
 ------------------------------------------------ (E-If)

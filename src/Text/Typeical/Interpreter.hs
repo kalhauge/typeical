@@ -99,6 +99,7 @@ printExpr :: SyntaxTree -> IO ()
 printExpr tree = do putStr "Parse expression: " 
                     putStr . writeSyntaxExpr $ tree
                     putStr "\n"
+                    putStr . writeSyntaxTree $ tree
 
 parseExpr :: Interpreter ()
 parseExpr = do 

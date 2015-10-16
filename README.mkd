@@ -11,14 +11,9 @@ without to much trouble.
 
 -   005: Create Pandoc plug-in.
 
--   008: Pattern match. Two formulars should be able to pattern match
-    against each other. If none contains variables they should be
-    presented as a solution.
-
--   009: Provide simple proofs. Create existence proofs on judgements, 
-    using the inference rules. 
-
 -   010: Be able to print the inference rules back in a readable format.
+
+-   011: Create pretty parse trees 
 
 ### Done
 
@@ -44,3 +39,9 @@ without to much trouble.
 -   004: Inference rules. Create infrence rules using a simple syntax.
     the inference rules should be able to be stored in the interpreter.
 
+-   008: Pattern match. Two formulars should be able to pattern match
+    against each other. If none contains variables they should be
+    presented as a solution.
+
+-   009: Provide simple proofs. Create existence proofs on judgements, 
+    using the inference rules. 
