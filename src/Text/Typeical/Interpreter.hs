@@ -20,6 +20,7 @@ import Text.Typeical.Readers.InfRule
 
 import Text.Typeical.Writers.BNF
 import Text.Typeical.Writers.SyntaxTree
+import Text.Typeical.Writers.InfRule
 
 type Interpreter = ParserT String (TypeicalT IO)
 
@@ -64,23 +65,34 @@ patternMatch = do
 
 proveExpr :: Interpreter ()
 proveExpr = do
-  try $ string "prove"
-  
-  (gramma, jm, rules) <- lift $ (,,) <$> getGramma <*> getJudgements <*> getRules
-  tree         <- skipWs >> judgement gramma jm
+    try $ string "prove"
+    withDerivation <- option False (string "!" >> return True)
+    
+    (gramma, jm, rules) <- lift $ (,,) <$> getGramma <*> getJudgements <*> getRules
+    tree         <- skipWs >> judgement gramma jm
+    restOfLine
 
-  restOfLine
-  case prove rules tree of
-    Nothing -> liftIO $ do
-      putStr "Could not prove "
-      putStr . writeSyntaxExpr $ tree
-      putStr ".\n"
-    Just solution -> liftIO $ do
-      putStr "Solution found to "
-      putStr . writeSyntaxExpr $ tree
-      putStr ":\n"
-      print solution
-  
+    if withDerivation 
+      then case buildDerivation rules tree of
+          Nothing -> excuse tree
+          Just (derv, solution) -> liftIO $ do
+            putStr "Solution found to "
+            putStr . writeSyntaxExpr $ tree
+            putStr ":\n"
+            putStr . writeDerivation $ derv
+            putStr "\n"
+            print solution
+      else case prove rules tree of
+          Nothing -> excuse tree
+          Just solution -> liftIO $ do
+            putStr "Solution found to "
+            putStr . writeSyntaxExpr $ tree
+            putStr ":\n"
+            print solution
+  where excuse tree = liftIO $ do
+          putStr "Could not prove "
+          putStr . writeSyntaxExpr $ tree
+          putStr ".\n" 
 
 addGramma :: Interpreter ()
 addGramma = try $ do 
@@ -134,9 +146,9 @@ addNewInfRule = do
   inf' <- try $ infRule gramma jm
   lift $ addRule inf'
   restOfLine
-  -- liftIO $ do putStr "Found Inference Rule:\n" 
-  --             print inf'
-  --             putStr "\n"
+  liftIO $ do putStr "Found Inference Rule:\n" 
+              putStr . writeInfRule $ inf'
+              putStr "\n"
 
 runInterpreter :: FilePath -> IO ()
 runInterpreter t = do 

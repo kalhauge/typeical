@@ -18,9 +18,7 @@ concrete s = ($ s)
 -- | Parse a gramma using a old possible empty gramma
 bnf :: Stream s m Char => Gramma -> ParserT s m Gramma
 bnf gramma = do
-  traceM "Enter Gramma"
   exprs <- (bnfExpr gramma <?> "bnf expression") `endBy1` restOfLine
-  traceM "Done Gramma"
   let ss = map fst exprs
   return . fromList $ zip ss $ mapM snd exprs (symbols gramma `union` ss)
 

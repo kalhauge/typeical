@@ -21,8 +21,7 @@ showBNF bnf ss = M.foldrWithKey f ss (asMap bnf)
                   showString " ::= " . 
                   expression value . 
                   showString "\n"
-    
-    expression = showIList " | " . map showTerm 
+    expression  = showIList " | " . map showTerm 
    
 showSymbol :: Symbol -> ShowS
 showSymbol key = showChar '<' . showString (symbolName key) . showChar '>'

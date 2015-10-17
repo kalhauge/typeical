@@ -59,7 +59,10 @@ data Token = Const String
            | Ref Symbol
            deriving (Show, Eq)
 
-data Variable = Variable Symbol Int Int deriving (Show, Eq, Ord)
+data Variable = Variable { varSymbol :: Symbol 
+                         , varMajor :: Int 
+                         , varMinor :: Int 
+                         } deriving (Show, Eq, Ord)
 
 data SyntaxTree = SyntaxTree Term [SyntaxTree]
                 | Var Variable

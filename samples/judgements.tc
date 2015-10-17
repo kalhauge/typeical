@@ -14,7 +14,7 @@ pattern match ( true ) --> false with ( t ) --> t
 ( v ) --> v
 
 t --> t'
----------------- (E-Paran1)
+---------------- (E-Paran2)
 ( t ) --> ( t' )
 
 ; Lets first work with the parns
@@ -44,19 +44,17 @@ prove if ( if true then false else true ) then false else false --> t
 
 judgement t -->* t
 
--------- (E-Refl)
+-------- (B-Refl)
 t -->* t
-
-t --> t'
------------- (E-Step)
-t -->* t'
 
 t --> t'  
 t' -->* t''
------------- (E-Trans)
+------------ (B-Trans)
 t -->* t''
 
 ; Prove that the expression eventualy steps to a value
 prove if ( if true then false else true ) then false else false -->* v
 
+prove! if false then false else false -->* v
 
+pattern match  t1 -->* t1 with  v2 -->* v2'
