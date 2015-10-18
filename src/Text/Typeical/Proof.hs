@@ -27,7 +27,7 @@ data Derivation = Derivation { rule :: InfRule
 
 type VariableScope = M.Map Variable SyntaxTree
 
-newtype Solution = Solution { scope :: VariableScope }
+newtype Solution = Solution { scope :: VariableScope } deriving (Eq)
 
 emptySolution :: Solution
 emptySolution = Solution M.empty
@@ -38,7 +38,7 @@ set k v s = Solution $ M.insert k v $ scope s
 get :: Variable -> Solution -> Maybe SyntaxTree
 get k s = M.lookup k $ scope s 
 
-newtype Match = Match { solutions :: (Solution, Solution)}
+newtype Match = Match { solutions :: (Solution, Solution)} deriving (Eq)
 
 leftSolution = fst . solutions 
 rightSolution = snd . solutions
@@ -58,24 +58,40 @@ instance Show Match where
   showsPrec _ (Match (vs1, vs2)) = 
       shows vs1 . showString "\n" . shows vs2
 
+inorder :: Monad m => a -> [a -> m a] -> m a
+inorder a = foldl (>>=) (return a) 
+
+stable :: (Eq a, Monad m) => (a -> m a) -> a -> m a
+stable f a = do a' <- f a 
+                if a' == a then return a 
+                           else stable f a'
+
+traceS :: (Show a) => a -> a
+traceS a = trace (show a) a
+
 match :: SyntaxTree -> SyntaxTree -> Maybe Match
-match s1 s2 = do
-    m1 <- match' s1 (freeVars (variables s1) s2) emptySolution
-    m2 <- match' s2 (freeVars (variables s2) s1) emptySolution 
-    return $ Match (m1, m2)
+match s1 s2 | trace ("m " ++ writeSyntaxExpr s1 ++ " @ " ++ writeSyntaxExpr s2) True =
+    stable fixpoint $ Match (emptySolution, emptySolution)
+  where fixpoint (Match (m1, m2)) = do 
+            m1' <- match' s1' s2' m1 
+            m2' <- match' s2' s1' m2 
+            let a = traceS $ Match (m1', m2')
+            return $ trace ("f " ++ writeSyntaxExpr s1' ++ " # " ++ writeSyntaxExpr s2' ++ " ____ " ++ show m1 ++ " - " ++ show m2 ) a
+          where s1' = substitude m1 s1
+                s2' = substitude m2 s2
+
 
 -- | match returns the solution nesseary to make one syntax tree match
 -- an other.
 match' :: SyntaxTree -> SyntaxTree -> Solution -> Maybe Solution
---match' s1 s2 sl | trace ("match' " ++ writeSyntaxExpr s1 ++ " " ++ writeSyntaxExpr s2 ++ " " ++ show sl) False = undefined
+-- match' s1 s2 sl | trace ("match' " ++ writeSyntaxExpr s1 ++ " " ++ writeSyntaxExpr s2 ++ " " ++ show sl) False = undefined
 match' (SyntaxTree t1 sub1) st sl =  case st of 
     Var v                         -> Just sl
-    SyntaxTree t2 sub2 | t1 == t2 -> 
-      foldl (>>=) (return sl) $ zipWith match' sub1 sub2
+    SyntaxTree t2 sub2 | t1 == t2 -> inorder sl $ zipWith match' sub1 sub2
     otherwise                     -> Nothing
 match' (Var v) st sl = case get v sl of 
-    Nothing -> Just (set v st sl)
-    Just s  -> set v st <$> match' st s sl
+    Nothing -> Just $ set v st sl
+    Just s  -> match' s st emptySolution >> return sl
 
 preserve :: (a -> b) -> a -> (a, b)
 preserve f a = (a, f a)
@@ -98,10 +114,15 @@ variables (Var v) = [v]
 variables (SyntaxTree _ subs) = concatMap variables subs
 
 substitude :: Solution -> SyntaxTree -> SyntaxTree
-substitude s (SyntaxTree t subs) = 
-    SyntaxTree t $ map (substitude s) subs
-substitude s var@(Var v) = fromMaybe var $ get v s
+substitude sl st = substitude' (variables st) sl st
 
+substitude' :: [Variable] -> Solution -> SyntaxTree -> SyntaxTree
+substitude' vs sl (SyntaxTree t subs) = 
+    SyntaxTree t $ map (substitude' vs sl) subs
+substitude' vs sl var@(Var v) = case get v sl of
+    --Just (Var v1) -> var
+    Just st -> freeVars vs st
+    Nothing -> var
 
 -- | Solve problems. 
 prove :: [InfRule] -> SyntaxTree -> Maybe Solution
@@ -117,15 +138,14 @@ buildOneDerivation rules st inf = do
     
     traceM $ "in -> " ++ writeSyntaxExpr st
     
-    traceM $ "inner  (" ++ ruleId inf ++ ") " ++ show inner
-    traceM $ "outer  (" ++ ruleId inf ++ ") " ++ show outer
 
     -- Try to prove the first permis in the inference rules using the inner
     -- solution. Use this updated solution to prove the next premise. 
-    (subderv, inner'') <- foldM buildOne' ([], inner) (premises inf)
+    (subderv, inner') <- foldM buildOne' ([], inner) (premises inf)
 
-    let inner' = updateSolution inner inner''
-    
+    -- let inner' = updateSolution inner inner''
+   
+    traceM $ "inner  (" ++ ruleId inf ++ ") " ++ show inner
     traceM $ "inner' (" ++ ruleId inf ++ ") " ++ show inner'
     
     -- Hopefully we have a solution that is able to prove all premises, now
@@ -133,6 +153,7 @@ buildOneDerivation rules st inf = do
     -- from the inner solution. If so replace them.
     let outer' = Solution $ M.map (substitude inner') $ scope outer
 
+    traceM $ "outer  (" ++ ruleId inf ++ ") " ++ show outer
     traceM $ "outer' (" ++ ruleId inf ++ ") " ++ show outer'
     
     let outerExpr = substitude outer' st
@@ -147,7 +168,7 @@ buildOneDerivation rules st inf = do
       buildOne' (sd, s) st = do
         (d, new) <- buildDerivation rules (substitude s st)
         return (d:sd, updateSolution s new)
-      updateSolution s new = Solution $ M.union (scope s) (scope new)
+      updateSolution s new = Solution $ M.union (scope new) (scope s) 
 
 renaming :: Match -> Match
 renaming (Match (Solution vs1,Solution vs2)) = 
