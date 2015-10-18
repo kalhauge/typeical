@@ -1,0 +1,15 @@
+t ::= v | ( t ) | if t then t else t | t & t | t "|" t
+v ::= true | false
+
+judgement t --> t
+
+match t --> t1 with (t) --> v
+
+t --> t'
+---------------- (E-Paran1)
+( t ) --> ( t' )
+
+---------------- (E-Paran2)
+( v ) --> v
+
+prove! ( true ) --> v'

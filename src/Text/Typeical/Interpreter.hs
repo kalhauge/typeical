@@ -47,7 +47,7 @@ stm = do
 
 patternMatch :: Interpreter ()
 patternMatch = do
-  try $ id <$> (string "pattern" .> string "match")
+  try $ id <$> (string "match")
   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
   skipWs 
   j1 <- skipWs >> judgement gramma jm
