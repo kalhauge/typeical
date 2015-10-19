@@ -50,7 +50,7 @@ newtype CounterExample = CounterExample { failed :: [(Term, Term)]}
 
 instance Show Solution where
   showsPrec _ (Solution vs) = 
-      showString "Solution = [" . list . showString "]"
+      showString "{" . list . showString "}"
     where showSingleAss k a = 
             showVariable k . showString " = " . showSyntaxExpr a
           list s = foldr ($) s $ 
@@ -59,7 +59,11 @@ instance Show Solution where
 
 instance Show Match where
   showsPrec _ (Match (vs1, vs2)) = 
-      shows vs1 . showString "\n" . shows vs2
+      showString "M(" 
+      . shows vs1 
+      . showString ", " 
+      . shows vs2  
+      . showString ")"
 
 inorder :: Monad m => a -> [a -> m a] -> m a
 inorder a = foldl (>>=) (return a) 
