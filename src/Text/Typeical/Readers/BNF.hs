@@ -33,7 +33,7 @@ bnfExpr g = do
 
 expression :: Stream s m Char => Expression -> ParserT s m (Ambigious Expression)
 expression expr = sequence <$> helper
-  where rest = option [] $ (ws *> char '|') .> helper
+  where rest = option [] $ try ((ws *> char '|') .> helper)
         helper = choice [
             (++) <$> do 
                  try $ string "..." 

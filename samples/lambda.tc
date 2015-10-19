@@ -1,5 +1,37 @@
-t ::= v | var | ( t ) | t t
-v ::= \ var . t
-var ::= x | y | z | w
+t ::= v | x | t t
+v ::= ( x . t )   
+x ::= f | y | z | w
 
-!t (\ x . x x) \ x . x x
+; !t (x . x x) (x . x x)
+
+judgement t "[" x "|>" t "]" t
+
+------------- Sub-Var1
+x [x |> t'] t'
+
+-------------- Sub-Var2
+x' [x |> t'] x'
+
+------------------------- Sub-Fun1
+(x. t) [x |> t'] (x. t)
+
+t [x |> t'] t''
+--------------------- Sub-Fun2
+(x'. t) [x |> t'] (x'. t'')
+
+judgement t --> t
+
+t [x |> t'] t''
+-------------- E-App
+(x. t) t' --> t''
+
+t -> t'
+-------------- E-App1
+v t --> v t'
+
+t -> t'
+-------------- E-App2
+t t1 --> t' t1
+
+
+

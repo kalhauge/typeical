@@ -34,6 +34,6 @@ rulerWithId :: Stream s m Char => ParserT s m String
 rulerWithId = do 
     many1 $ char '-'
     skipWs
-    id <- choice [ within '(' ')', many1 $ letter <|> oneOf "-" ]
+    id <- choice [ within '(' ')', many1 $ alphaNum <|> oneOf "-" ]
     restOfLine 
     return id
