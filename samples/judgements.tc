@@ -19,41 +19,41 @@ t --> t'
 
 ; Lets first work with the parns
 
-prove! ((true)) --> (t)
+prove! ( (true) ) --> ( t )
 
-; !& ( v ) --> v 
-; 
-; t1 --> t1'
-; ------------------------------------------------ (E-If)
-; if t1 then t2 else t3 --> if t1' then t2 else t3
-; 
-; ----------------------------- (E-IfTrue)
-; if true then t2 else t3 --> t2
-; 
-; ------------------------------ (E-IfFalse)
-; if false then t2 else t3 --> t3
-; 
-; ; Prove that the expression steps to something
-; ; prove if ( if true then false else true ) then false else false --> t
-; 
-; 
-; judgement t -->* t
-; 
-; match t1 -->* t1 with  v2 -->* v2'
-; 
-; -------- (B-Refl)
-; t -->* t
-; 
-; t --> t'  t' -->* t''
-; -------------------- (B-Trans)
-; t -->* t''
-; 
-; ; Prove that the expression eventualy steps to a value
-; ; prove if ( if true then false else true ) then false else false -->* v
-; 
-; prove! if false then false else (false) -->* (t)
-; 
-; ; match if false then false else (false) -->* (t) with if false then t1 else t2 -->* t2
-; ; match t -->* t' with if false then false else false -->* (t)
-; ; match if false then false else (false) --> (t') with if false then t2 else t3 --> t3
+!& ( v ) --> v 
+
+t1 --> t1'
+------------------------------------------------ (E-If)
+if t1 then t2 else t3 --> if t1' then t2 else t3
+
+----------------------------- (E-IfTrue)
+if true then t2 else t3 --> t2
+
+------------------------------ (E-IfFalse)
+if false then t2 else t3 --> t3
+
+; Prove that the expression steps to something
+; prove if ( if true then false else true ) then false else false --> t
+
+
+judgement t -->* t
+
+match t1 -->* t1 with  v2 -->* v2'
+
+-------- (B-Refl)
+t -->* t
+
+t --> t'  t' -->* t''
+-------------------- (B-Trans)
+t -->* t''
+
+; Prove that the expression eventualy steps to a value
+; prove if ( if true then false else true ) then false else false -->* v
+
+prove! if false then false else (false) -->* (t)
+
+; match if false then false else (false) -->* (t) with if false then t1 else t2 -->* t2
+; match t -->* t' with if false then false else false -->* (t)
+; match if false then false else (false) --> (t') with if false then t2 else t3 --> t3
 

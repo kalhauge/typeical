@@ -111,8 +111,7 @@ applyS o i = Solution $ M.map (substitude i) $ scope o
 -- give a partial correct solution
 apply :: Solution -> SyntaxTree -> SyntaxTree
 apply sl (SyntaxTree t subs) = SyntaxTree t $ map (sub sl) subs
-apply sl var@(Var v) = fromMaybe (trace warning var) $ get v sl
-  where warning = "WARNING: " ++ writeSyntaxExpr var ++ " not assinged a value" 
+apply sl var@(Var v) = fromMaybe var $ get v sl
 
 -- | updateS takes two solutions and adds them to eachother favouring the 
 -- new solution
@@ -140,6 +139,19 @@ match s1 s2 = match' s1 s2 emptySolution
           Just s  -> match' s st emptySolution >> return sl
           -- ^ Ensure that the known solution fits. 
 
+-- Partial match is like match, but does not fail if a variable
+-- does not have a direct solution.
+partialMatch :: SyntaxTree -> SyntaxTree -> Maybe Solution
+partialMatch s1 s2 = match' s1 s2 emptySolution
+  where match' (SyntaxTree t1 sub1) st sl = case st of 
+          SyntaxTree t2 sub2 | t1 == t2 -> 
+            inorder sl $ zipWith match' sub1 sub2
+          Var v                         -> return sl 
+          otherwise                     -> Nothing
+        match' (Var v) st sl = case get v sl of 
+          Nothing -> Just $ set v st sl 
+          Just s  -> match' s st emptySolution >> return sl
+
 -- | closure tries to find a syntax that both the first and the
 -- second can match
 closure :: SyntaxTree -> SyntaxTree -> Maybe SyntaxTree
@@ -147,7 +159,10 @@ closure s1 s2 = case match s1 s2 of
   Just m1 -> Just s2 
   Nothing -> case match s2 s1 of
       Just m2 -> Just s1
-      Nothing -> Nothing
+      Nothing -> do 
+        m1' <- partialMatch s1 s2
+        m2' <- partialMatch s2 s1
+        closure (apply m1' s1) (apply m2' s2)
       -- ^ Add more to this case
 
 preserve :: (a -> b) -> a -> (a, b)
@@ -195,22 +210,31 @@ buildDerivation rules st = msum . map (buildOneDerivation rules st) $ rules
 buildOneDerivation :: [InfRule] -> SyntaxTree -> InfRule -> Maybe (Derivation, Solution)
 buildOneDerivation rules s inf = do
     -- Try to find a closure
+    -- traceM ("input (" ++ ruleId inf ++ ") = " ++ writeSyntaxExpr s)
+    
     s' <- closure s $ conclusion inf
+
+    -- traceM ("closure (" ++ ruleId inf ++ ") = " ++ writeSyntaxExpr s')
    
     -- If such exists, create a solution from it.
     mi <- match (conclusion inf) s'
+    
+    -- traceM ("m inner (" ++ ruleId inf ++ ") = " ++ show mi )
 
     -- For each of the premisses, prove try to build a derivation in this
     -- new scope updataing the solution if needed.
     (subderv, mi') <- foldM buildOne' ([], mi) (premises inf)
 
+    -- traceM ("m inner' (" ++ ruleId inf ++ ") = " ++ show mi')
     -- Now apply the solution to the colsure giving us a complete
     -- derivation
-    let s'' = apply mi' s'
-    
+    let s'' = apply mi' s' 
+
+    -- traceM ("output (" ++ ruleId inf ++ ") = " ++ writeSyntaxExpr s'')
     -- Now define the solution to be the match on s'' from s
     mo <- match s s''
 
+    -- traceM ("match (" ++ ruleId inf ++ ") = " ++ show mo)
     -- Return the created derivation
     return (Derivation inf (reverse subderv) s'', mo)
 
@@ -218,7 +242,7 @@ buildOneDerivation rules s inf = do
       -- | Returns maybe a soltution and the derivations in reverse order
       buildOne' :: ([Derivation], Solution) -> SyntaxTree -> Maybe ([Derivation], Solution)
       buildOne' (sd, s) st = do
-        (d, new) <- buildDerivation rules (substitude s st)
+        (d, new) <- buildDerivation rules (apply s st)
         return (d:sd, updateS s new)
 
 renaming :: Match -> Match
