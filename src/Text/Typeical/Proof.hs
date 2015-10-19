@@ -32,6 +32,8 @@ newtype Solution = Solution { scope :: VariableScope } deriving (Eq)
 emptySolution :: Solution
 emptySolution = Solution M.empty
 
+updateSolution s new = Solution $ M.union (scope s) (scope new) 
+
 solution :: [(Variable, SyntaxTree)] -> Solution
 solution = Solution . M.fromList
 
@@ -76,17 +78,31 @@ stable f a = do a' <- f a
 traceS :: (Show a) => a -> a
 traceS a = trace (show a) a
 
-match :: SyntaxTree -> SyntaxTree -> Maybe Match
-match s1 s2 | trace ("m " ++ writeSyntaxExpr s1 ++ " @ " ++ writeSyntaxExpr s2) True =
-    stable fixpoint $ Match (emptySolution, emptySolution)
-  where fixpoint (Match (m1, m2)) = do 
-            m1' <- match' s1' s2' m1 
-            m2' <- match' s2' s1' m2 
-            let a = traceS $ Match (m1', m2')
-            return $ trace ("f " ++ writeSyntaxExpr s1' ++ " # " ++ writeSyntaxExpr s2' ++ " ____ " ++ show m1 ++ " - " ++ show m2 ) a
-          where s1' = substitude m1 s1
-                s2' = substitude m2 s2
+isSyntaxTree :: SyntaxTree -> Bool
+isSyntaxTree (SyntaxTree _ _) = True
+isSyntaxTree _              = False
 
+applyS :: Solution -> Solution -> Solution
+applyS i o = Solution $ M.map (substitude i) $ scope o
+
+match :: SyntaxTree -> SyntaxTree -> Maybe Match
+match s1 s2 | trace ("match " ++ writeSyntaxExpr s1 ++ " @ " ++ writeSyntaxExpr s2) True = 
+  do m1 <- match' s1 s2 emptySolution
+     m2 <- match' s2 s1 emptySolution
+     let m = Match (m1, m2)
+     if closure m1 m2 
+       then return m 
+       else do 
+         let s1' = substitude m1 s1
+             s2' = substitude m2 s2
+         Match(m1', m2') <- match s1' s2'
+         return $ Match (applyS m1' m1, applyS m2' m2)
+  where
+    closure :: Solution -> Solution -> Bool
+    closure s1 s2 = closureS s1 && closureS s2 
+
+    closureS :: Solution -> Bool
+    closureS (Solution m) = not $ any isSyntaxTree $ M.elems m 
 
 -- | match returns the solution nesseary to make one syntax tree match
 -- an other.
@@ -97,7 +113,7 @@ match' (SyntaxTree t1 sub1) st sl =  case st of
     SyntaxTree t2 sub2 | t1 == t2 -> inorder sl $ zipWith match' sub1 sub2
     otherwise                     -> Nothing
 match' (Var v) st sl = case get v sl of 
-    Nothing -> Just $ set v st sl
+    Nothing -> Just $ set v st sl 
     Just s  -> match' s st emptySolution >> return sl
 
 preserve :: (a -> b) -> a -> (a, b)
@@ -158,7 +174,7 @@ buildOneDerivation rules st inf = do
     -- Hopefully we have a solution that is able to prove all premises, now
     -- we have to check is the outer solution, depends on any instances
     -- from the inner solution. If so replace them.
-    let outer' = Solution $ M.map (substitude inner') $ scope outer
+    let outer' = applyS inner' outer 
 
     traceM $ "outer  (" ++ ruleId inf ++ ") " ++ show outer
     traceM $ "outer' (" ++ ruleId inf ++ ") " ++ show outer'
@@ -175,7 +191,6 @@ buildOneDerivation rules st inf = do
       buildOne' (sd, s) st = do
         (d, new) <- buildDerivation rules (substitude s st)
         return (d:sd, updateSolution s new)
-      updateSolution s new = Solution $ M.union (scope new) (scope s) 
 
 renaming :: Match -> Match
 renaming (Match (Solution vs1,Solution vs2)) = 

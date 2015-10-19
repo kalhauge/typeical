@@ -61,14 +61,17 @@ matchTests = testGroup "match tests" [
   , testCase "variable match" testVarMatch
   , testCase "match multible variables" testVarMultiMatch
   , testCase "match nested variables" testNestedMatch
+  , testCase "match multi nested variables" testMulitNestedMatch 
   ]
 
 e0 e = SyntaxTree e []
 e1 e s = SyntaxTree e [s]
+e2 e s1 s2  = SyntaxTree e [s1, s2]
 eM = SyntaxTree
 
 eV = e1 tV 
 eJ = eM jmt
+eJi = e2 jmt
 
 varT = Variable (Symbol "t")
 vT m n = Var (varT m n)
@@ -97,6 +100,13 @@ testNestedMatch =
          solution [(varT (-1) 0, vT 0 0)], 
          solution [(varT (-1) 0, eParan (vT 0 0))])) 
     @=? match (eParan (vT (-1) 0)) (vT (-1) 0)
+
+testMulitNestedMatch =
+    Just (Match (
+         solution [(varT (-1) 0, vT 0 0)], 
+         solution [(varT (-1) 0, eParan (vT 0 0))])) 
+    @=? match (eParan (vT (-1) 0) `eJi` eParan(vT (-1) 1)) 
+              (eParan (eParan eTrue) `eJi` eParan(vT (-1) 0))
 
 
 
