@@ -49,9 +49,9 @@ t --> t'  t' -->* t''
 t -->* t''
 
 ; Prove that the expression eventualy steps to a value
-; prove if ( if true then false else true ) then false else false -->* v
+prove! if ( if true then false else true ) then false else false -->* v
 
-prove! if false then false else (false) -->* (t)
+; prove! if false then false else (false) -->* (t)
 
 ; match if false then false else (false) -->* (t) with if false then t1 else t2 -->* t2
 ; match t -->* t' with if false then false else false -->* (t)

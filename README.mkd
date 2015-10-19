@@ -4,16 +4,11 @@ Typical is a format and a programing language to write syntax driven
 proofs in. It is intended to be easy to write and easy to read, and
 without to much trouble. 
 
-
 ## Project
 
 ### Todo
 
 -   005: Create Pandoc plug-in.
-
--   010: Be able to print the inference rules back in a readable format.
-
--   011: Create pretty parse trees 
 
 ### Done
 
@@ -45,3 +40,8 @@ without to much trouble.
 
 -   009: Provide simple proofs. Create existence proofs on judgements, 
     using the inference rules. 
+
+-   010: Be able to print the inference rules back in a readable format.
+
+-   011: Create pretty parse trees 
+
