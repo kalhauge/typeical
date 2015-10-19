@@ -21,7 +21,7 @@ module Text.Typeical.Gramma ( Gramma()
 import qualified Data.Map as M;
 
 newtype Gramma = Gramma { innerMap :: M.Map Symbol Expression
-                        } deriving (Show)
+                        } deriving (Show, Eq)
 
 -- | Create a Gramma form a list of symbols and expressions
 fromList :: [(Symbol, Expression)] -> Gramma

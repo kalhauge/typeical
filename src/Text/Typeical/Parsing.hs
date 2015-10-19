@@ -2,6 +2,7 @@
 -- parsers.
 {-# LANGUAGE FlexibleContexts #-}
 module Text.Typeical.Parsing ( ParserT
+                             , Parser
                              , (.>)
                              , (<.)
                              , (<.>)
@@ -36,6 +37,7 @@ module Text.Typeical.Parsing ( ParserT
                              , restOfLine
                              , skipWs
                              , nat
+                             , parseStr
                              ) 
                              where
 
@@ -43,7 +45,14 @@ import           Text.Parsec;
 import           Data.List;
 import           Control.Monad;
 
+import           Control.Monad.Identity;
+
 type ParserT s m = ParsecT s () m
+
+type Parser s = ParsecT s () Identity
+
+parseStr :: Parser String a -> String -> Either ParseError a
+parseStr p = runParser p () "<string>"
 
 within :: Stream s m Char => Char -> Char -> ParserT s m String 
 within begin end = char begin *> many1 (noneOf [end]) <* char end

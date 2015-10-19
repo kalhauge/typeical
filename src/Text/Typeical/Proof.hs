@@ -1,7 +1,7 @@
 -- This module contains the elements needed for performing
 -- proofs.
 
-module Text.Typeical.Proof (match, prove, substitude, Solution, Match, InfRule(..), Judgement(..), buildDerivation, Derivation(..)) where
+module Text.Typeical.Proof (match, prove, substitude, solution, Solution, emptySolution, Match(..), InfRule(..), Judgement(..), buildDerivation, Derivation(..)) where
 
 import Debug.Trace
 import Control.Monad
@@ -31,6 +31,9 @@ newtype Solution = Solution { scope :: VariableScope } deriving (Eq)
 
 emptySolution :: Solution
 emptySolution = Solution M.empty
+
+solution :: [(Variable, SyntaxTree)] -> Solution
+solution = Solution . M.fromList
 
 set :: Variable -> SyntaxTree -> Solution -> Solution
 set k v s = Solution $ M.insert k v $ scope s 
