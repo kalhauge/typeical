@@ -103,10 +103,11 @@ testNestedMatch =
 
 testMulitNestedMatch =
     Just (Match (
-         solution [(varT (-1) 0, vT 0 0)], 
-         solution [(varT (-1) 0, eParan (vT 0 0))])) 
+         solution [(varT (-1) 0, eParan eTrue), 
+                   (varT (-1) 1, vT (-1) 2)], 
+         solution [(varT (-1) 2, vT (-1) 1)])) 
     @=? match (eParan (vT (-1) 0) `eJi` eParan(vT (-1) 1)) 
-              (eParan (eParan eTrue) `eJi` eParan(vT (-1) 0))
+              (eParan (eParan eTrue) `eJi` eParan(vT (-1) 2))
 
 
 

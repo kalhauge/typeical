@@ -83,7 +83,7 @@ isSyntaxTree (SyntaxTree _ _) = True
 isSyntaxTree _              = False
 
 applyS :: Solution -> Solution -> Solution
-applyS i o = Solution $ M.map (substitude i) $ scope o
+applyS o i = Solution $ M.map (substitude i) $ scope o
 
 match :: SyntaxTree -> SyntaxTree -> Maybe Match
 match s1 s2 | trace ("match " ++ writeSyntaxExpr s1 ++ " @ " ++ writeSyntaxExpr s2) True = 
@@ -93,10 +93,12 @@ match s1 s2 | trace ("match " ++ writeSyntaxExpr s1 ++ " @ " ++ writeSyntaxExpr 
      if closure m1 m2 
        then return m 
        else do 
-         let s1' = substitude m1 s1
-             s2' = substitude m2 s2
+         let s1' = sub m1 s1
+             s2' = sub m2 s2
          Match(m1', m2') <- match s1' s2'
-         return $ Match (applyS m1' m1, applyS m2' m2)
+         let m1'' = applyS m1 m1'
+             m2'' = applyS m2 m1'
+         return $ Match (applyS m1'' m2'', applyS m2'' m1'')
   where
     closure :: Solution -> Solution -> Bool
     closure s1 s2 = closureS s1 && closureS s2 
@@ -136,6 +138,11 @@ variables :: SyntaxTree -> [Variable]
 variables (Var v) = [v]
 variables (SyntaxTree _ subs) = concatMap variables subs
 
+sub :: Solution -> SyntaxTree -> SyntaxTree
+sub sl (SyntaxTree t subs) = SyntaxTree t $ map (sub sl) subs
+sub sl var@(Var v) = fromMaybe var $ get v sl
+
+
 substitude :: Solution -> SyntaxTree -> SyntaxTree
 substitude sl st = substitude' (variables st) sl st
 
@@ -174,7 +181,7 @@ buildOneDerivation rules st inf = do
     -- Hopefully we have a solution that is able to prove all premises, now
     -- we have to check is the outer solution, depends on any instances
     -- from the inner solution. If so replace them.
-    let outer' = applyS inner' outer 
+    let outer' = applyS outer inner'
 
     traceM $ "outer  (" ++ ruleId inf ++ ") " ++ show outer
     traceM $ "outer' (" ++ ruleId inf ++ ") " ++ show outer'
