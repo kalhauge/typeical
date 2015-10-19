@@ -19,7 +19,7 @@ t --> t'
 
 ; Lets first work with the parns
 
-prove! ((true)) --> t
+prove! ((true)) --> (t)
 
 ; !& ( v ) --> v 
 ; 
