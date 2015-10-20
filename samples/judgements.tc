@@ -39,14 +39,14 @@ if false then t2 else t3 --> t3
 
 judgement t -->* t
 
-match t1 -->* t1 with  v2 -->* v2'
-
 -------- (B-Refl)
 t -->* t
 
 t --> t'  t' -->* t''
 -------------------- (B-Trans)
 t -->* t''
+
+; match t1 -->* t1 with  v2 -->* v2'
 
 ; Prove that the expression eventualy steps to a value
 prove! if ( if true then false else true ) then false else false -->* v

@@ -1,16 +1,16 @@
-t ::= v | x | t t
+t ::= v | [ t ] | x | t t
 v ::= ( x . t )   
 x ::= f | y | z | w
 
-; !t (x . x x) (x . x x)
+; !t (y . y y) (y . y y)
 
 judgement t "[" x "|>" t "]" t
 
-------------- Sub-Var1
-x [x |> t'] t'
-
 -------------- Sub-Var2
 x' [x |> t'] x'
+
+------------- Sub-Var1
+x [x |> t'] t'
 
 ------------------------- Sub-Fun1
 (x. t) [x |> t'] (x. t)
@@ -20,6 +20,14 @@ t [x |> t'] t''
 (x'. t) [x |> t'] (x'. t'')
 
 judgement t --> t
+
+
+-------------- E-Paran1
+[ v ] --> v
+
+t --> t'
+-------------- E-Paran2
+[ t ] -->  [ t' ]
 
 t [x |> t'] t''
 -------------- E-App
@@ -33,5 +41,20 @@ t --> t'
 -------------- E-App2
 v t --> v t'
 
+
+prove [ (y. (z. y)) (y. (z. y)) ] (y. (z. z)) --> t
+
+judgement t -->* t
+
+-------- (B-Refl)
+t -->* t
+
+t --> t'  
+t' -->* t''
+-------------------- (B-Trans)
+t -->* t''
+
+
+prove [ (y. (z. y)) (y. (z. y)) ] (y. (z. z)) -->* v
 
 
