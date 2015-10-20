@@ -8,6 +8,8 @@ import Text.Typeical
 
 import Text.Parsec
 
+import Text.Typeical.Writers.SyntaxTree
+
 import Text.Typeical.Readers.SyntaxTree
 import Text.Typeical.Readers.BNF
 
@@ -20,22 +22,32 @@ tests = [
     , matchTests
     ]
 
-baselangStr = "t ::= v | ( t )\nv ::= true | false\n"
+baselangStr = "t ::= v | ( t ) | t & t \nv ::= true | false\n"
 baselang = fromList [ t, v ]
-t = (Symbol "t", [ tV, tParan ])
+t = (Symbol "t", [ tV, tParan, tAnd ])
 v = (Symbol "v", [ tTrue , tFalse ])
 tV = [Ref Symbol {symbolName = "v"}]
 tParan = [Const "(",Ref Symbol {symbolName = "t"},Const ")"]
+tAnd = [Ref (Symbol "t"), Const "&", Ref (Symbol "t")]
 tTrue = [Const "true"]
 tFalse = [Const "false"]
 
 jmt = [Ref (Symbol "t"), Const "-->", Ref (Symbol "t")]
 
+testParse :: SyntaxTree -> Test.Framework.Test
+testParse s = 
+    testCase str $ Right s @=? parseStr pST str
+  where str = writeSyntaxExpr s
+
 parseTests :: Test.Framework.Test
-parseTests = testGroup "parse tests" [
+parseTests = testGroup "parse tests" $
     testCase "base language" testBaseLang
-  , testCase "true" testSimpleSyntax
-  , testCase "( true )" testNested
+  :  map testParse [ 
+      eTrue
+    , eParan eTrue
+    , eTrue `eAndi` eTrue
+    , vT 0 0 
+    , vT 0 0 `eAndi` vT 1 3
   ]
 
 pST :: Parser String SyntaxTree
@@ -46,12 +58,6 @@ sT = SyntaxTree
 testBaseLang = 
     Right baselang @=? 
     parseStr (bnf Gramma.empty) baselangStr
-testSimpleSyntax = 
-    Right (SyntaxTree tV [SyntaxTree tTrue []]) @=?
-    parseStr pST "true"
-testNested = 
-    Right (SyntaxTree tParan [SyntaxTree tV [SyntaxTree tTrue []]]) @=? 
-    parseStr pST "( true )"
 
 
 matchTests :: Test.Framework.Test
@@ -76,6 +82,7 @@ eJi = e2 jmt
 varT = Variable (Symbol "t")
 vT m n = Var (varT m n)
 
+eAndi = e2 tAnd
 eParan = e1 tParan
 eTrue = eV $ e0 tTrue
 eFalse = eV $ e0 tFalse

@@ -34,8 +34,7 @@ seeNext n = do
   traceShowM out
 
 stm :: Interpreter ()
-stm = do 
-  choice [ addGramma
+stm = choice [ addGramma
          , addNewJudgement
          , addNewInfRule
          , patternMatch
@@ -47,7 +46,7 @@ stm = do
 
 patternMatch :: Interpreter ()
 patternMatch = do
-  try $ id <$> (string "match")
+  try $ id <$> string "match"
   (gramma, jm) <- lift $ (,) <$> getGramma <*> getJudgements
   skipWs 
   j1 <- skipWs >> judgement gramma jm

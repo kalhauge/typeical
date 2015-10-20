@@ -8,7 +8,7 @@ import Text.Typeical.Readers.SyntaxTree
 import Text.Typeical.Parsing
 
 judgement :: Stream s m Char => Gramma -> [Judgement] -> ParserT s m SyntaxTree
-judgement g js = anyTerm g (map syntax js) <?> "judgement"
+judgement g js = anyTerm g (map syntax js)
 
 infRule :: Stream s m Char => Gramma -> [Judgement] -> ParserT s m InfRule
 infRule g js = do 
