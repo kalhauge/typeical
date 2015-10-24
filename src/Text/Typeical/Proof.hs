@@ -1,7 +1,16 @@
 -- This module contains the elements needed for performing
 -- proofs.
 
-module Text.Typeical.Proof (match, prove, substitude, solution, Solution, emptySolution, Match(..), InfRule(..), Judgement(..), buildDerivation, Derivation(..)) where
+module Text.Typeical.Proof ( match
+                           , prove
+                           , solution
+                           , Solution
+                           , emptySolution
+                           , InfRule(..)
+                           , Judgement(..)
+                           , buildDerivation
+                           , Derivation(..)
+                           ) where
 
 import Control.Monad
 import Text.Typeical.Writers.SyntaxTree
@@ -85,7 +94,7 @@ match s1 s2 = match' s1 s2 emptySolution
           otherwise                     -> Nothing
         match' (Var v) st sl = case get v sl of 
           Nothing -> Just $ set v st sl 
-          Just s  -> match' s st emptySolution >> return sl
+          Just s -> match' s st emptySolution >> return sl
           -- ^ Ensure that the known solution fits. 
 
 -- Partial match is like match, but does not fail if a variable
